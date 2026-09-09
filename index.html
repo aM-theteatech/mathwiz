@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loci Explorer - Interactive Flashcards</title>
+<style>
+:root{
+  --bg:#f6f8fc;
+  --card:#ffffff;
+  --text:#1d2433;
+  --muted:#667085;
+  --line:#d9e0ea;
+  --accent:#5b67f1;
+  --accent2:#8b5cf6;
+  --good:#16865c;
+  --bad:#c24152;
+  --soft:#eef0ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(91,103,241,.10),transparent 26%),
+    radial-gradient(circle at 90% 15%,rgba(139,92,246,.10),transparent 24%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+.app{max-width:980px;margin:auto;padding:24px 16px 48px}
+.hero{text-align:center;margin-bottom:18px}
+.hero h1{font-size:clamp(28px,5vw,44px);margin:5px 0 8px}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+.badge{display:inline-flex;padding:7px 12px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:800;color:#4b53c7}
+.topbar{
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:16px
+}
+.progress-wrap{min-width:0}
+.progress-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-bottom:7px}
+.progress{height:9px;border-radius:999px;background:#e9edf5;overflow:hidden}
+.progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:20%;transition:width .35s ease}
+.score{font-weight:900;font-size:14px;white-space:nowrap}
+.controls{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:18px}
+button{
+  border:1px solid var(--line);background:#fff;color:var(--text);
+  padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;
+  min-height:44px;transition:.2s transform,.2s background,.2s border-color;
+}
+button:hover{transform:translateY(-1px)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.active{background:var(--soft);border-color:#b9befa;color:#4048b8}
+.stage{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 250px;
+  gap:18px;
+  align-items:start;
+}
+@media(max-width:760px){.stage{grid-template-columns:1fr}.side{order:2}}
+.flashcard{perspective:1500px;min-height:510px}
+.card-inner{
+  position:relative;min-height:510px;transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.flashcard.flipped .card-inner{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;
+  background:var(--card);border:1px solid var(--line);border-radius:26px;
+  padding:24px;display:flex;flex-direction:column;box-shadow:0 20px 55px rgba(22,34,58,.10)
+}
+.face.back{transform:rotateY(180deg)}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.kicker{font-size:12px;font-weight:900;color:#5b67f1;text-transform:uppercase;letter-spacing:.08em}
+.counter{font-size:12px;color:var(--muted)}
+.question{font-size:clamp(22px,3vw,31px);font-weight:900;line-height:1.25;margin:18px 0 10px}
+.answer-title{font-size:clamp(25px,3vw,35px);font-weight:950;margin:16px 0 8px}
+.desc{font-size:16px;line-height:1.6;color:#4f596a}
+.diagram{
+  margin:14px 0 18px;padding:12px;border-radius:18px;background:#f8f9fc;border:1px solid #e6eaf0;
+  min-height:210px;display:grid;place-items:center;overflow:hidden
+}
+svg{width:100%;max-height:230px}
+svg .main{stroke:#222a39}
+svg .soft{stroke:#8791a3}
+svg text{font-family:Arial,Helvetica,sans-serif;fill:#30394a}
+.pulse{transform-origin:center;animation:pulse 1.6s infinite ease-in-out}
+.dash{stroke-dasharray:8 7;animation:dash 5s linear infinite}
+.rotate-dot{transform-origin:150px 105px;animation:orbit 4.5s linear infinite}
+@keyframes pulse{50%{transform:scale(1.25);opacity:.65}}
+@keyframes dash{to{stroke-dashoffset:-60}}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.card-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}
+.card-actions button{flex:1}
+.side{
+  background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;
+  box-shadow:0 10px 28px rgba(22,34,58,.06)
+}
+.side h3{margin:2px 0 10px;font-size:16px}
+.memory-grid{display:grid;gap:8px}
+.memory{
+  border-radius:12px;padding:10px;background:#f6f7fb;border:1px solid #e8ebf0;
+  font-size:13px;font-weight:800;line-height:1.35
+}
+.quiz{
+  display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px
+}
+.quiz.show{display:block}
+.quiz p{font-weight:800;margin:0 0 10px}
+.choices{display:grid;gap:8px}
+.choice{text-align:left;width:100%}
+.choice.correct{background:#e8f6ef;border-color:#8ac8aa;color:#116242}
+.choice.wrong{background:#fdecee;border-color:#e7a4ad;color:#9f2e3d}
+.feedback{min-height:24px;margin-top:10px;font-weight:800;font-size:14px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.nav button{flex:1}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{
+  position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;
+  animation:fall 1.4s linear forwards
+}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <span class="badge">FORM 3 MATHEMATICS</span>
+    <h1>Loci Explorer</h1>
+    <p>Interactive Flashcards • Loci in Two Dimensions</p>
+  </header>
+
+  <section class="topbar">
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="progressText">Card 1 of 5</span><span id="mastery">20% completed</span></div>
+      <div class="progress"><span id="progressBar"></span></div>
+    </div>
+    <div class="score">⭐ Score: <span id="score">0</span></div>
+  </section>
+
+  <div class="controls">
+    <button id="studyBtn" class="active" type="button">📚 Study Mode</button>
+    <button id="quizBtn" type="button">🎯 Quiz Mode</button>
+    <button id="shuffleBtn" type="button">🔀 Shuffle</button>
+    <button id="resetBtn" type="button">↻ Reset</button>
+  </div>
+
+  <section class="stage">
+    <div>
+      <div class="flashcard" id="flashcard" tabindex="0" aria-label="Flashcard. Press Enter to flip.">
+        <div class="card-inner">
+          <article class="face front">
+            <div class="card-head">
+              <span class="kicker" id="frontTag"></span>
+              <span class="counter" id="frontCounter"></span>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="diagram" id="frontDiagram"></div>
+            <p class="desc" id="frontHint"></p>
+
+            <div id="quizArea" class="quiz">
+              <p>Choose the correct answer:</p>
+              <div class="choices" id="choices"></div>
+              <div class="feedback" id="feedback" aria-live="polite"></div>
+            </div>
+
+            <div class="card-actions" id="studyActions">
+              <button class="primary" id="flipBtn" type="button">🔄 Show Answer</button>
+            </div>
+          </article>
+
+          <article class="face back">
+            <div class="card-head">
+              <span class="kicker">Answer</span>
+              <span class="counter" id="backCounter"></span>
+            </div>
+            <div class="answer-title" id="answer"></div>
+            <p class="desc" id="explanation"></p>
+            <div class="diagram" id="backDiagram"></div>
+            <div class="card-actions">
+              <button id="backFlipBtn" type="button">↩ Back</button>
+              <button class="primary" id="knowBtn" type="button">✓ I Understand</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button id="prevBtn" type="button">← Previous</button>
+        <button id="nextBtn" class="primary" type="button">Next →</button>
+      </div>
+      <div class="hint">Tip: press <strong>Enter</strong> to flip • use ← → to navigate</div>
+    </div>
+
+    <aside class="side">
+      <h3>🧠 Memory Tips</h3>
+      <div class="memory-grid">
+        <div class="memory">📍 1 point → <strong>Circle</strong></div>
+        <div class="memory">➖ 1 line → <strong>2 parallel lines</strong></div>
+        <div class="memory">📍📍 2 points → <strong>Perpendicular bisector</strong></div>
+        <div class="memory">✕ 2 intersecting lines → <strong>Angle bisectors</strong></div>
+      </div>
+    </aside>
+  </section>
+</div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+(()=>{
+const diagrams={
+locusFront:`<svg viewBox="0 0 300 200" role="img" aria-label="A moving point forms a path">
+<path class="main dash" d="M30 135 C80 35,145 45,185 95 S245 155,275 55" fill="none" stroke-width="4"/>
+<circle class="main pulse" cx="30" cy="135" r="7"/><circle class="main" cx="185" cy="95" r="6"/><circle class="main" cx="275" cy="55" r="6"/>
+<text x="16" y="160">P₁</text><text x="190" y="90">P₂</text><text x="260" y="42">P₃</text></svg>`,
+locusBack:`<svg viewBox="0 0 300 200"><path class="main" d="M30 135 C80 35,145 45,185 95 S245 155,275 55" fill="none" stroke-width="5"/>
+<circle class="main pulse" cx="145" cy="66" r="7"/><text x="90" y="180">Path of point = locus</text></svg>`,
+circleFront:`<svg viewBox="0 0 300 200"><circle class="main" cx="150" cy="105" r="7"/><line class="main" x1="150" y1="105" x2="215" y2="105" stroke-width="3"/><g class="rotate-dot"><circle class="main" cx="215" cy="105" r="7"/></g><text x="136" y="90">O</text><text x="178" y="96">fixed distance</text></svg>`,
+circleBack:`<svg viewBox="0 0 300 200"><circle class="main" cx="150" cy="105" r="67" fill="none" stroke-width="4"/><circle class="main" cx="150" cy="105" r="6"/><line class="main" x1="150" y1="105" x2="217" y2="105" stroke-width="3"/><circle class="main" cx="217" cy="105" r="6"/><text x="130" y="94">centre</text><text x="175" y="96">radius</text></svg>`,
+parallelFront:`<svg viewBox="0 0 300 200"><line class="main" x1="25" y1="105" x2="275" y2="105" stroke-width="5"/><circle class="main pulse" cx="185" cy="55" r="7"/><line class="soft dash" x1="185" y1="55" x2="185" y2="105" stroke-width="2"/><text x="195" y="82">d</text><text x="112" y="130">fixed line</text></svg>`,
+parallelBack:`<svg viewBox="0 0 300 200"><line class="main" x1="25" y1="55" x2="275" y2="55" stroke-width="4"/><line class="soft" x1="25" y1="105" x2="275" y2="105" stroke-width="4"/><line class="main" x1="25" y1="155" x2="275" y2="155" stroke-width="4"/><text x="128" y="44">lokus</text><text x="110" y="98">original line</text><text x="128" y="180">lokus</text></svg>`,
+perpFront:`<svg viewBox="0 0 300 200"><circle class="main" cx="70" cy="125" r="6"/><circle class="main" cx="230" cy="125" r="6"/><circle class="main pulse" cx="150" cy="50" r="7"/><line class="main" x1="70" y1="125" x2="150" y2="50" stroke-width="2"/><line class="main" x1="230" y1="125" x2="150" y2="50" stroke-width="2"/><text x="58" y="148">A</text><text x="235" y="148">B</text><text x="158" y="48">P</text></svg>`,
+perpBack:`<svg viewBox="0 0 300 200"><line class="main" x1="55" y1="120" x2="245" y2="120" stroke-width="4"/><line class="main dash" x1="150" y1="25" x2="150" y2="180" stroke-width="4"/><circle class="main" cx="55" cy="120" r="6"/><circle class="main" cx="245" cy="120" r="6"/><rect x="150" y="105" width="15" height="15" fill="none" stroke="#222a39" stroke-width="2"/><text x="42" y="145">A</text><text x="250" y="145">B</text><text x="158" y="40">lokus</text></svg>`,
+angleFront:`<svg viewBox="0 0 300 200"><line class="main" x1="35" y1="165" x2="265" y2="35" stroke-width="4"/><line class="main" x1="35" y1="35" x2="265" y2="165" stroke-width="4"/><circle class="main pulse" cx="150" cy="66" r="7"/><text x="160" y="61">P</text></svg>`,
+angleBack:`<svg viewBox="0 0 300 200"><line class="soft" x1="35" y1="165" x2="265" y2="35" stroke-width="4"/><line class="soft" x1="35" y1="35" x2="265" y2="165" stroke-width="4"/><line class="main dash" x1="150" y1="18" x2="150" y2="182" stroke-width="4"/><line class="main dash" x1="45" y1="100" x2="255" y2="100" stroke-width="4"/><text x="160" y="32">angle bisector</text></svg>`
+};
+
+const baseCards=[
+ {tag:"Concept 1",q:"What is a locus?",hint:"Imagine a point moving according to a specific condition.",a:"Lokus",ex:"A locus is a set of points or a path formed by a moving point that satisfies a specific condition.",front:diagrams.locusFront,back:diagrams.locusBack},
+ {tag:"Concept 2",q:"A point moves at a constant distance from a fixed point. What is its locus?",hint:"The distance from the moving point to the fixed point is always the same.",a:"Circle",ex:"Lokus ialah sebuah bulatan. Titik tetap ialah centre dan fixed distance ialah radius.",front:diagrams.circleFront,back:diagrams.circleBack},
+ {tag:"Concept 3",q:"A point moves at a constant distance from a straight line. What is its locus?",hint:"Measure the perpendicular distance from the point to the line.",a:"Two parallel lines",ex:"Lokus terdiri daripada dua garis lurus yang selari dengan original line, satu pada setiap sisi.",front:diagrams.parallelFront,back:diagrams.parallelBack},
+ {tag:"Concept 4",q:"A point is equidistant from two fixed points, A and B. What is its locus?",hint:"PA = PB for every point P on the locus.",a:"Perpendicular bisector",ex:"The locus is the perpendicular bisector of line segment AB.",front:diagrams.perpFront,back:diagrams.perpBack},
+ {tag:"Concept 5",q:"A point is equidistant from two intersecting straight lines. What is its locus?",hint:"The perpendicular distance from P to both lines is equal.",a:"Angle bisectors",ex:"Lokus ialah garis angle bisector bagi sudut-sudut yang terbentuk oleh dua garis lurus tersebut.",front:diagrams.angleFront,back:diagrams.angleBack}
+];
+
+let cards=[...baseCards], index=0, mode="study", score=0, answered=new Set();
+
+const $=id=>document.getElementById(id);
+const flashcard=$("flashcard"), quizArea=$("quizArea"), studyActions=$("studyActions");
+
+function optionsFor(card){
+ const answers=baseCards.map(c=>c.a).filter(a=>a!==card.a);
+ return shuffle([card.a,...shuffle(answers).slice(0,3)]);
+}
+function shuffle(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function render(){
+ const c=cards[index];
+ flashcard.classList.remove("flipped");
+ $("frontTag").textContent=c.tag;
+ $("frontCounter").textContent=`${index+1} / ${cards.length}`;
+ $("backCounter").textContent=`${index+1} / ${cards.length}`;
+ $("question").textContent=c.q;
+ $("frontHint").textContent=c.hint;
+ $("answer").textContent=c.a;
+ $("explanation").textContent=c.ex;
+ $("frontDiagram").innerHTML=c.front;
+ $("backDiagram").innerHTML=c.back;
+ $("progressText").textContent=`Card ${index+1} of ${cards.length}`;
+ const pct=Math.round((index+1)/cards.length*100);
+ $("progressBar").style.width=pct+"%";
+ $("mastery").textContent=pct+"% completed";
+ $("feedback").textContent="";
+ if(mode==="quiz"){
+   quizArea.classList.add("show");
+   studyActions.style.display="none";
+   renderChoices(c);
+ }else{
+   quizArea.classList.remove("show");
+   studyActions.style.display="flex";
+ }
+}
+function renderChoices(c){
+ const box=$("choices"); box.innerHTML="";
+ optionsFor(c).forEach(txt=>{
+   const b=document.createElement("button");
+   b.type="button"; b.className="choice"; b.textContent=txt;
+   b.addEventListener("click",()=>checkAnswer(b,txt,c));
+   box.appendChild(b);
+ });
+}
+function checkAnswer(btn,txt,c){
+ const all=[...document.querySelectorAll(".choice")];
+ all.forEach(b=>b.disabled=true);
+ if(txt===c.a){
+   btn.classList.add("correct");
+   $("feedback").textContent="✅ Correct! Well done.";
+   if(!answered.has(c.q)){score++;answered.add(c.q);$("score").textContent=score;burst();}
+ }else{
+   btn.classList.add("wrong");
+   all.find(b=>b.textContent===c.a)?.classList.add("correct");
+   $("feedback").textContent=`❌ Belum tepat. Answer: ${c.a}`;
+ }
+ setTimeout(()=>flashcard.classList.add("flipped"),650);
+}
+function burst(){
+ const wrap=$("confetti");
+ const colors=["#5b67f1","#8b5cf6","#16a36f","#f59e0b","#e05260"];
+ for(let i=0;i<28;i++){
+   const p=document.createElement("i");
+   p.style.left=Math.random()*100+"%";
+   p.style.background=colors[i%colors.length];
+   p.style.animationDelay=(Math.random()*.3)+"s";
+   wrap.appendChild(p);
+   setTimeout(()=>p.remove(),1800);
+ }
+}
+function setMode(m){
+ mode=m;
+ $("studyBtn").classList.toggle("active",m==="study");
+ $("quizBtn").classList.toggle("active",m==="quiz");
+ render();
+}
+$("flipBtn").addEventListener("click",()=>flashcard.classList.add("flipped"));
+$("backFlipBtn").addEventListener("click",()=>flashcard.classList.remove("flipped"));
+$("knowBtn").addEventListener("click",()=>{ if(index<cards.length-1){index++;render()} else burst(); });
+$("prevBtn").addEventListener("click",()=>{index=(index-1+cards.length)%cards.length;render()});
+$("nextBtn").addEventListener("click",()=>{index=(index+1)%cards.length;render()});
+$("studyBtn").addEventListener("click",()=>setMode("study"));
+$("quizBtn").addEventListener("click",()=>setMode("quiz"));
+$("shuffleBtn").addEventListener("click",()=>{cards=shuffle(cards);index=0;render()});
+$("resetBtn").addEventListener("click",()=>{cards=[...baseCards];index=0;score=0;answered.clear();$("score").textContent=0;setMode("study")});
+flashcard.addEventListener("keydown",e=>{
+ if(e.target!==flashcard)return;
+ if(e.key==="Enter"){flashcard.classList.toggle("flipped");}
+ if(e.key==="ArrowRight"){$("nextBtn").click();}
+ if(e.key==="ArrowLeft"){$("prevBtn").click();}
+});
+render();
+})();
+</script>
+</body>
+</html>
