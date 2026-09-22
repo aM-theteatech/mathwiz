@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bab 9: Laju dan Pecutan - 9.1 Laju</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Fredoka', 'cursive']
+                    },
+                    colors: {
+                        jarak: '#F59E0B',   // Yellow/Amber for Jarak (J)
+                        laju: '#EC4899',    // Pink for Laju (L)
+                        masa: '#3B82F6',    // Blue for Masa (M)
+                        brand: {
+                            50: '#F0F9FF',
+                            100: '#E0F2FE',
+                            500: '#0284C7',
+                            600: '#0369A1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Keyframe Animations and Helper Styles */
+        @keyframes roadMove {
+            0% { background-position: 0 0; }
+            100% { background-position: -60px 0; }
+        }
+        .road-striped {
+            background: repeating-linear-gradient(
+                90deg,
+                #475569,
+                #475569 30px,
+                #f8fafc 30px,
+                #f8fafc 60px
+            );
+        }
+        .animate-road {
+            animation: roadMove 0.8s linear infinite;
+        }
+        .paused {
+            animation-play-state: paused !important;
+        }
+
+        /* Glassmorphism effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Triangle SVG interactions */
+        .triangle-btn {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .triangle-btn:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.15));
+        }
+
+        /* Speedometer gauge animation */
+        .needle-transition {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748B;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-200">
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-br from-amber-400 via-pink-500 to-sky-500 p-2.5 rounded-2xl shadow-md text-white">
+                    <i class="fa-solid fa-gauge-high text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs uppercase tracking-wider text-amber-400 font-bold block">Matematik Tingkatan 2 KSSM</span>
+                    <h1 class="text-lg md:text-xl font-display font-bold tracking-wide text-white">Bab 9: Laju dan Pecutan <span class="text-sky-400">• 9.1 Laju</span></h1>
+                </div>
+            </div>
+
+            <!-- Global Controls & Speed Multiplier -->
+            <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
+                <span class="text-xs font-semibold text-slate-300 px-2 hidden sm:inline"><i class="fa-solid fa-gauge text-slate-400 mr-1"></i> Kelajuan Simulasi:</span>
+                <button onclick="setGlobalAnimSpeed(0.5)" id="btn-speed-05" class="px-2.5 py-1 text-xs font-bold rounded-lg transition text-slate-300 hover:bg-slate-700">0.5x</button>
+                <button onclick="setGlobalAnimSpeed(1)" id="btn-speed-1" class="px-2.5 py-1 text-xs font-bold rounded-lg transition bg-sky-500 text-white shadow">1x</button>
+                <button onclick="setGlobalAnimSpeed(2)" id="btn-speed-2" class="px-2.5 py-1 text-xs font-bold rounded-lg transition text-slate-300 hover:bg-slate-700">2x</button>
+            </div>
+        </div>
+
+        <!-- MODULE TABS -->
+        <nav class="bg-slate-800 border-t border-slate-700 overflow-x-auto scrollbar-none">
+            <div class="max-w-7xl mx-auto flex px-2 py-1 gap-1 min-w-max">
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-amber-400 bg-slate-900 shadow">
+                    <i class="fa-solid fa-compass"></i> 1. Pengenalan
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-shapes"></i> 2. Segi Tiga J-L-M
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-car-side"></i> 3. Kira Laju
+                </button>
+                <button onclick="switchTab(4)" id="tab-btn-4" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-bus"></i> 4. Kira Masa
+                </button>
+                <button onclick="switchTab(5)" id="tab-btn-5" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-motorcycle"></i> 5. Kira Jarak
+                </button>
+                <button onclick="switchTab(6)" id="tab-btn-6" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-flask"></i> 6. Makmal Eksperimen
+                </button>
+                <button onclick="switchTab(7)" id="tab-btn-7" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/50">
+                    <i class="fa-solid fa-pen-to-square"></i> 7. Latihan Interaktif
+                </button>
+                <!-- TAB BARU: DASHBOARD GURU -->
+                <button onclick="switchTab(8)" id="tab-btn-8" class="tab-nav flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-emerald-400 bg-slate-800 hover:text-white hover:bg-slate-700/50 border border-emerald-500/30">
+                    <i class="fa-solid fa-user-tie"></i> 8. Dashboard Guru
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- BAHAGIAN 1: PENGENALAN LAJU -->
+        <section id="section-1" class="space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 border-b pb-4">
+                    <div>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 1</span>
+                        <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Apakah itu Laju?</h2>
+                        <p class="text-slate-600 text-sm md:text-base">Fahami bagaimana laju menghubungkan <span class="font-bold text-amber-600">Jarak</span> yang dilalui dengan <span class="font-bold text-sky-600">Masa</span> yang diambil.</p>
+                    </div>
+                    <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-center gap-3">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-3xl"></i>
+                        <div>
+                            <p class="text-xs font-bold text-amber-900 uppercase">Takrifan Penting</p>
+                            <p class="text-sm font-semibold text-slate-800">Laju ialah <span class="bg-amber-200 px-1 rounded">kadar perubahan jarak</span> terhadap <span class="bg-sky-200 px-1 rounded">masa</span>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAR SIMULATION DISPLAY -->
+                <div class="bg-slate-900 rounded-2xl p-4 md:p-6 shadow-inner text-white overflow-hidden relative">
+                    <!-- Road & Environment -->
+                    <div class="relative h-48 md:h-56 bg-gradient-to-b from-sky-400 via-sky-200 to-emerald-200 rounded-xl overflow-hidden border border-slate-700 flex flex-col justify-between p-3">
+                        <!-- Cloud Background -->
+                        <div class="flex justify-between items-center opacity-80 px-4">
+                            <i class="fa-solid fa-cloud text-white text-3xl animate-pulse"></i>
+                            <i class="fa-solid fa-cloud text-white text-2xl"></i>
+                            <i class="fa-solid fa-sun text-yellow-300 text-4xl"></i>
+                        </div>
+
+                        <!-- Checkpoints A and B -->
+                        <div class="absolute bottom-12 left-0 right-0 flex justify-between px-8 z-10">
+                            <div class="flex flex-col items-center">
+                                <span class="bg-rose-600 text-white font-bold text-xs px-2 py-0.5 rounded shadow">Titik A (0 km)</span>
+                                <div class="w-1 h-8 bg-rose-500"></div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="bg-emerald-600 text-white font-bold text-xs px-2 py-0.5 rounded shadow">Titik B (100 km)</span>
+                                <div class="w-1 h-8 bg-emerald-500"></div>
+                            </div>
+                        </div>
+
+                        <!-- Moving Car SVG -->
+                        <div id="p1-car-container" class="absolute bottom-10 left-6 transform -translate-x-1/2 transition-all ease-linear z-20" style="left: 8%;">
+                            <div class="relative flex flex-col items-center">
+                                <!-- Live Speed Badge above car -->
+                                <span id="p1-badge-speed" class="bg-slate-900/90 text-pink-400 font-bold text-xs px-2 py-0.5 rounded-full border border-pink-500 shadow mb-1">
+                                    0 km/j
+                                </span>
+                                <!-- Red Car Graphic -->
+                                <svg class="w-16 h-10 md:w-20 md:h-12 drop-shadow-md" viewBox="0 0 100 60" fill="none">
+                                    <path d="M10 35 Q 20 20 40 20 L 65 20 Q 80 25 90 35 L 95 38 Q 98 42 95 48 L 90 48 L 10 48 Z" fill="#EF4444"/>
+                                    <path d="M30 22 L 45 22 L 45 32 L 25 32 Z" fill="#93C5FD"/>
+                                    <path d="M48 22 L 63 22 L 68 32 L 48 32 Z" fill="#93C5FD"/>
+                                    <circle cx="25" cy="48" r="8" fill="#1E293B" stroke="#94A3B8" stroke-width="2"/>
+                                    <circle cx="75" cy="48" r="8" fill="#1E293B" stroke="#94A3B8" stroke-width="2"/>
+                                    <circle cx="25" cy="48" r="3" fill="#E2E8F0"/>
+                                    <circle cx="75" cy="48" r="3" fill="#E2E8F0"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Road Surface -->
+                        <div class="h-10 bg-slate-700 w-full relative overflow-hidden rounded-b-lg border-t-2 border-amber-400">
+                            <div id="p1-road-stripes" class="absolute inset-0 road-striped opacity-60"></div>
+                        </div>
+                    </div>
+
+                    <!-- DASHBOARD GAUGES & TELEMETRY -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                        <!-- Distance Marker -->
+                        <div class="bg-slate-800/90 p-4 rounded-xl border border-amber-500/30 flex items-center gap-4">
+                            <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl text-2xl">
+                                <i class="fa-solid fa-route"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-semibold uppercase">Jarak Ditempuh</p>
+                                <p class="text-2xl font-bold text-amber-400 font-mono"><span id="p1-dist-display">0</span> <span class="text-sm">km</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Digital Clock / Time -->
+                        <div class="bg-slate-800/90 p-4 rounded-xl border border-sky-500/30 flex items-center gap-4">
+                            <div class="p-3 bg-sky-500/20 text-sky-400 rounded-xl text-2xl">
+                                <i class="fa-solid fa-stopwatch"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-semibold uppercase">Masa Diambil</p>
+                                <p class="text-2xl font-bold text-sky-400 font-mono"><span id="p1-time-display">0.0</span> <span class="text-sm">jam</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Speedometer -->
+                        <div class="bg-slate-800/90 p-4 rounded-xl border border-pink-500/30 flex items-center gap-4">
+                            <div class="p-3 bg-pink-500/20 text-pink-400 rounded-xl text-2xl">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-semibold uppercase">Laju Semasa</p>
+                                <p class="text-2xl font-bold text-pink-400 font-mono"><span id="p1-speed-display">0</span> <span class="text-sm">km/j</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ANIMATION CONTROLS & SPEED CHOOSER -->
+                    <div class="mt-6 flex flex-wrap items-center justify-between gap-4 bg-slate-800 p-4 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <button id="p1-btn-start" onclick="startP1Sim()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Mulakan Pergerakan
+                            </button>
+                            <button id="p1-btn-reset" onclick="resetP1Sim()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i> Set Semula
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Pilih Laju Kereta:</span>
+                            <div class="inline-flex rounded-lg bg-slate-900 p-1 border border-slate-700">
+                                <button onclick="setP1TargetSpeed(40)" id="p1-spd-40" class="px-3 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition">40 km/j</button>
+                                <button onclick="setP1TargetSpeed(80)" id="p1-spd-80" class="px-3 py-1 text-xs font-bold rounded-md bg-pink-500 text-white shadow transition">80 km/j</button>
+                                <button onclick="setP1TargetSpeed(120)" id="p1-spd-120" class="px-3 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition">120 km/j</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXPLANATION CARD -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-ruler-horizontal"></i> Jarak (J)</h4>
+                        <p class="text-xs text-amber-800 mt-1">Panjang lintasan atau laluan yang dilalui oleh sesuatu objek. Unit piawai: <strong>kilometer (km)</strong> atau <strong>meter (m)</strong>.</p>
+                    </div>
+                    <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200">
+                        <h4 class="font-bold text-sky-900 flex items-center gap-2"><i class="fa-solid fa-clock"></i> Masa (M)</h4>
+                        <p class="text-xs text-sky-800 mt-1">Tempoh yang diambil untuk menyempurnakan pergerakan tersebut. Unit piawai: <strong>jam (j)</strong>, <strong>minit (min)</strong>, atau <strong>saat (s)</strong>.</p>
+                    </div>
+                    <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
+                        <h4 class="font-bold text-pink-900 flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Laju (L)</h4>
+                        <p class="text-xs text-pink-800 mt-1">Ukuran seberapa cepat sesuatu objek bergerak. Kiraan: <strong>Jarak ÷ Masa</strong>. Unit: <strong>km/j</strong> atau <strong>m/s</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 2: SEGI TIGA FORMULA INTERAKTIF -->
+        <section id="section-2" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4">
+                    <span class="px-3 py-1 bg-pink-100 text-pink-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 2</span>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Segi Tiga Formula Interaktif (J-L-M)</h2>
+                    <p class="text-slate-600 text-sm md:text-base">Klik pada mana-mana pemboleh ubah yang ingin anda cari untuk mendedahkan formulanya!</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- TRIANGLE DISPLAY INTERACTIVE -->
+                    <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900 p-6 md:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                        <p class="text-slate-400 text-xs font-semibold mb-2 uppercase tracking-widest text-center">
+                            <i class="fa-solid fa-hand-pointer animate-bounce mr-1 text-amber-400"></i> Klik huruf pada segi tiga di bawah
+                        </p>
+
+                        <!-- SVG TRIANGLE -->
+                        <div class="relative w-72 h-72 md:w-80 md:h-80 my-2">
+                            <svg class="w-full h-full drop-shadow-2xl" viewBox="0 0 300 260">
+                                <!-- Outer Triangle Border -->
+                                <polygon points="150,10 10,250 290,250" fill="#1E293B" stroke="#475569" stroke-width="6" stroke-linejoin="round"/>
+                                
+                                <!-- Divider Lines -->
+                                <!-- Horizontal Division Line -->
+                                <line x1="75" y1="130" x2="225" y2="130" stroke="#F8FAFC" stroke-width="6" stroke-dasharray="none" />
+                                <!-- Vertical Division Line -->
+                                <line x1="150" y1="130" x2="150" y2="250" stroke="#F8FAFC" stroke-width="6" />
+
+                                <!-- Division Symbol (÷) Indications -->
+                                <text x="150" y="80" fill="#CBD5E1" font-size="14" font-weight="bold" text-anchor="middle">÷ (Bahagi)</text>
+                                <!-- Multiplication Symbol (×) Indications -->
+                                <text x="150" y="200" fill="#CBD5E1" font-size="20" font-weight="bold" text-anchor="middle">×</text>
+
+                                <!-- Interactive Zone J (TOP - JARAK) -->
+                                <g class="triangle-btn" onclick="selectTriangleVar('J')">
+                                    <polygon points="150,18 80,125 220,125" fill="#F59E0B" class="hover:opacity-90 transition"/>
+                                    <text x="150" y="90" fill="#FFFFFF" font-size="52" font-family="Fredoka" font-weight="bold" text-anchor="middle" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.4))">J</text>
+                                    <text x="150" y="112" fill="#78350F" font-size="12" font-weight="bold" text-anchor="middle">JARAK</text>
+                                </g>
+
+                                <!-- Interactive Zone L (BOTTOM LEFT - LAJU) -->
+                                <g class="triangle-btn" onclick="selectTriangleVar('L')">
+                                    <polygon points="16,244 75,135 144,135 144,244" fill="#EC4899" class="hover:opacity-90 transition"/>
+                                    <text x="80" y="205" fill="#FFFFFF" font-size="52" font-family="Fredoka" font-weight="bold" text-anchor="middle" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.4))">L</text>
+                                    <text x="80" y="228" fill="#831843" font-size="12" font-weight="bold" text-anchor="middle">LAJU</text>
+                                </g>
+
+                                <!-- Interactive Zone M (BOTTOM RIGHT - MASA) -->
+                                <g class="triangle-btn" onclick="selectTriangleVar('M')">
+                                    <polygon points="284,244 225,135 156,135 156,244" fill="#3B82F6" class="hover:opacity-90 transition"/>
+                                    <text x="220" y="205" fill="#FFFFFF" font-size="52" font-family="Fredoka" font-weight="bold" text-anchor="middle" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.4))">M</text>
+                                    <text x="220" y="228" fill="#1E3A8A" font-size="12" font-weight="bold" text-anchor="middle">MASA</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Manual Selection Buttons -->
+                        <div class="flex items-center gap-2 mt-4">
+                            <button onclick="selectTriangleVar('L')" id="btn-tri-L" class="px-4 py-2 bg-pink-600 text-white font-bold rounded-xl shadow hover:bg-pink-700 transition text-sm">Cari Laju (L)</button>
+                            <button onclick="selectTriangleVar('M')" id="btn-tri-M" class="px-4 py-2 bg-sky-600 text-white font-bold rounded-xl shadow hover:bg-sky-700 transition text-sm">Cari Masa (M)</button>
+                            <button onclick="selectTriangleVar('J')" id="btn-tri-J" class="px-4 py-2 bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition text-sm">Cari Jarak (J)</button>
+                        </div>
+                    </div>
+
+                    <!-- FORMULA ANIMATED DISPLAY CARD -->
+                    <div class="lg:col-span-6 flex flex-col justify-between space-y-6">
+                        <div id="triangle-result-card" class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-pink-500/50 transition-all duration-300">
+                            <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+                                <span id="tri-card-tag" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-500 text-white">Laju Ditutup</span>
+                                <i class="fa-solid fa-calculator text-slate-400 text-xl"></i>
+                            </div>
+
+                            <h3 id="tri-card-title" class="text-2xl font-display font-bold text-pink-400 mb-2">Mencari LAJU (L)</h3>
+                            <p id="tri-card-desc" class="text-slate-300 text-sm mb-6">Apabila huruf <span class="font-bold text-pink-400">L</span> ditutup, anda melihat <span class="font-bold text-amber-400">Jarak (J)</span> berada di atas <span class="font-bold text-sky-400">Masa (M)</span> dengan garis bahagi.</p>
+
+                            <!-- Dynamic Animated Formula Representation -->
+                            <div id="tri-formula-box" class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex items-center justify-center min-h-[140px]">
+                                <!-- Formula HTML rendered via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Action Controls -->
+                        <div class="flex items-center justify-between gap-3 bg-slate-200/80 p-3 rounded-2xl">
+                            <button onclick="resetTriangle()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i> Reset
+                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="selectTriangleVar('L')" class="px-3 py-2 bg-white text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 shadow border">1. Laju</button>
+                                <button onclick="selectTriangleVar('M')" class="px-3 py-2 bg-white text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 shadow border">2. Masa</button>
+                                <button onclick="selectTriangleVar('J')" class="px-3 py-2 bg-white text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 shadow border">3. Jarak</button>
+                            </div>
+                            <button onclick="switchTab(3)" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition flex items-center gap-2 shadow-md">
+                                Seterusnya <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 3: SIMULASI MENGIRA LAJU -->
+        <section id="section-3" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4">
+                    <span class="px-3 py-1 bg-pink-100 text-pink-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 3</span>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Simulasi 1: Mengira Laju</h2>
+                    <p class="text-slate-600 text-sm md:text-base">Situasi: Sebuah kereta bergerak sejauh <span class="font-bold text-amber-600">120 km</span> dalam masa <span class="font-bold text-sky-600">2 jam</span>. Berapakah lajunya?</p>
+                </div>
+
+                <!-- ANIMATION STAGE -->
+                <div class="bg-slate-900 rounded-2xl p-6 text-white space-y-6 shadow-xl">
+                    <div class="relative h-40 bg-gradient-to-b from-sky-400 to-slate-800 rounded-xl overflow-hidden border border-slate-700 flex flex-col justify-end p-2">
+                        <!-- Distance Marker overlay -->
+                        <div class="absolute top-3 left-4 right-4 flex justify-between items-center text-xs font-bold">
+                            <span class="bg-slate-900/80 px-3 py-1 rounded-full text-amber-400 border border-amber-500/40"><i class="fa-solid fa-flag-checkered mr-1"></i> Mula: 0 km</span>
+                            <span class="bg-slate-900/80 px-3 py-1 rounded-full text-amber-400 border border-amber-500/40"><i class="fa-solid fa-location-dot mr-1"></i> Penamat: 120 km</span>
+                        </div>
+
+                        <!-- Moving Car -->
+                        <div id="p3-car-container" class="absolute bottom-6 left-6 transform -translate-x-1/2 transition-all duration-300 z-10" style="left: 5%;">
+                            <svg class="w-16 h-10 md:w-20 md:h-12 drop-shadow-md" viewBox="0 0 100 60">
+                                <path d="M10 35 Q 20 20 40 20 L 65 20 Q 80 25 90 35 L 95 38 Q 98 42 95 48 L 90 48 L 10 48 Z" fill="#EC4899"/>
+                                <path d="M30 22 L 45 22 L 45 32 L 25 32 Z" fill="#E2E8F0"/>
+                                <path d="M48 22 L 63 22 L 68 32 L 48 32 Z" fill="#E2E8F0"/>
+                                <circle cx="25" cy="48" r="8" fill="#0F172A" stroke="#F472B6" stroke-width="2"/>
+                                <circle cx="75" cy="48" r="8" fill="#0F172A" stroke="#F472B6" stroke-width="2"/>
+                            </svg>
+                        </div>
+
+                        <!-- Road -->
+                        <div class="h-8 bg-slate-700 w-full relative overflow-hidden rounded-b-lg border-t-2 border-pink-400">
+                            <div id="p3-road" class="absolute inset-0 road-striped opacity-50"></div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar & Math Time vs Animation Time note -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-300 mb-1">
+                                <span>Kemajuan Perjalanan (Soalan)</span>
+                                <span><span id="p3-sim-km">0</span> / 120 km</span>
+                            </div>
+                            <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-700">
+                                <div id="p3-progress-bar" class="bg-gradient-to-r from-pink-500 to-amber-400 h-full w-0 transition-all"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm px-2">
+                            <div>
+                                <p class="text-xs text-slate-400">Masa Cerita Matematik:</p>
+                                <p class="font-bold text-sky-400 font-mono text-lg"><span id="p3-sim-hr">0.0</span> / 2.0 Jam</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400">Laju Dikirai:</p>
+                                <p class="font-bold text-pink-400 font-mono text-lg" id="p3-calculated-speed">? km/j</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-3">
+                        <button onclick="runP3Sim()" id="p3-btn-run" class="px-6 py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Mainkan Simulasi Pengiraan
+                        </button>
+                        <button onclick="resetP3Sim()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP BY STEP MATHEMATICAL SOLUTION -->
+                <div class="bg-slate-50 border-2 border-pink-200 rounded-2xl p-6 space-y-4">
+                    <h3 class="font-display font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-list-ol text-pink-500"></i> Langkah Demi Langkah Pengiraan
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Step 1 -->
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <span class="text-xs font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded uppercase">Langkah 1</span>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Tulis Formula Laju</h4>
+                            <div class="mt-2 text-center p-3 bg-slate-100 rounded-lg font-mono text-sm font-bold text-slate-700">
+                                Laju = <span class="text-amber-600">Jarak</span> ÷ <span class="text-sky-600">Masa</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <span class="text-xs font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded uppercase">Langkah 2</span>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Gantikan Nilai Diberi</h4>
+                            <div class="mt-2 text-center p-3 bg-slate-100 rounded-lg font-mono text-sm font-bold text-slate-700">
+                                Laju = <span class="text-amber-600">120 km</span> ÷ <span class="text-sky-600">2 jam</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <span class="text-xs font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded uppercase">Langkah 3</span>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Hitung Jawapan Akhir</h4>
+                            <div class="mt-2 text-center p-3 bg-pink-50 border border-pink-300 rounded-lg font-mono text-base font-bold text-pink-600">
+                                Laju = 60 km/j
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 italic bg-amber-50 p-3 rounded-lg border border-amber-200">
+                        <i class="fa-solid fa-circle-info text-amber-500 mr-1"></i> Nota Pedagogi: Laju <strong>60 km/j</strong> bermaksud kereta tersebut bergerak sejauh 60 kilometer dalam masa setiap 1 jam.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 4: SIMULASI MENGIRA MASA -->
+        <section id="section-4" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4">
+                    <span class="px-3 py-1 bg-sky-100 text-sky-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 4</span>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Simulasi 2: Mengira Masa Perjalanan</h2>
+                    <p class="text-slate-600 text-sm md:text-base">Situasi: Sebuah bas bergerak sejauh <span class="font-bold text-amber-600">180 km</span> dengan laju tetap <span class="font-bold text-pink-600">60 km/j</span> bertolak pada jam <span class="font-bold text-sky-600">8:00 pagi</span>. Berapakah masa yang diambil dan pukul berapakah bas sampai?</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- BUS ANIMATION AND CLOCK -->
+                    <div class="lg:col-span-7 bg-slate-900 p-6 rounded-2xl text-white space-y-6 flex flex-col justify-between shadow-xl">
+                        <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-clock text-sky-400 text-2xl"></i>
+                                <div>
+                                    <p class="text-xs text-slate-400">Jam Digital Bas</p>
+                                    <p id="p4-clock-display" class="text-xl font-bold font-mono text-sky-300">08:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400">Masa Berlalu</p>
+                                <p class="text-xl font-bold font-mono text-amber-400"><span id="p4-elapsed-hr">0.0</span> jam</p>
+                            </div>
+                        </div>
+
+                        <!-- Bus Animation Track -->
+                        <div class="relative h-40 bg-gradient-to-b from-sky-300 to-slate-800 rounded-xl overflow-hidden border border-slate-700 flex flex-col justify-end p-2">
+                            <!-- Distance checkmarks -->
+                            <div class="absolute top-2 left-2 right-2 flex justify-between text-[11px] font-bold text-amber-300">
+                                <span>0 km (8:00 AM)</span>
+                                <span>90 km</span>
+                                <span>180 km (11:00 AM)</span>
+                            </div>
+
+                            <!-- Bus SVG -->
+                            <div id="p4-bus-container" class="absolute bottom-6 left-6 transform -translate-x-1/2 transition-all duration-300 z-10" style="left: 5%;">
+                                <svg class="w-20 h-12 md:w-24 md:h-14 drop-shadow-md" viewBox="0 0 120 60">
+                                    <rect x="5" y="10" width="105" height="38" rx="6" fill="#3B82F6"/>
+                                    <rect x="15" y="15" width="20" height="15" rx="2" fill="#E2E8F0"/>
+                                    <rect x="40" y="15" width="20" height="15" rx="2" fill="#E2E8F0"/>
+                                    <rect x="65" y="15" width="20" height="15" rx="2" fill="#E2E8F0"/>
+                                    <rect x="90" y="15" width="15" height="15" rx="2" fill="#FEF08A"/>
+                                    <circle cx="30" cy="48" r="7" fill="#0F172A" stroke="#93C5FD" stroke-width="2"/>
+                                    <circle cx="85" cy="48" r="7" fill="#0F172A" stroke="#93C5FD" stroke-width="2"/>
+                                </svg>
+                            </div>
+
+                            <div class="h-8 bg-slate-700 w-full relative overflow-hidden rounded-b-lg border-t-2 border-sky-400">
+                                <div id="p4-road" class="absolute inset-0 road-striped opacity-50"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center gap-3">
+                            <button onclick="runP4Sim()" id="p4-btn-run" class="px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Mulakan Perjalanan Bas
+                            </button>
+                            <button onclick="resetP4Sim()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition">
+                                <i class="fa-solid fa-rotate-left"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SOLUTION CARD -->
+                    <div class="lg:col-span-5 bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-display font-bold text-slate-900 text-lg flex items-center gap-2 mb-4">
+                                <i class="fa-solid fa-calculator text-sky-600"></i> Pengiraan Masa (M)
+                            </h3>
+
+                            <div class="space-y-3">
+                                <div class="bg-white p-3 rounded-xl border shadow-sm">
+                                    <p class="text-xs text-slate-500 font-bold uppercase">1. Formula Masa</p>
+                                    <p class="font-mono font-bold text-slate-800 text-sm mt-1">Masa = <span class="text-amber-600">Jarak</span> ÷ <span class="text-pink-600">Laju</span></p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border shadow-sm">
+                                    <p class="text-xs text-slate-500 font-bold uppercase">2. Masukkan Nilai</p>
+                                    <p class="font-mono font-bold text-slate-800 text-sm mt-1">Masa = <span class="text-amber-600">180 km</span> ÷ <span class="text-pink-600">60 km/j</span></p>
+                                </div>
+                                <div class="bg-sky-600 text-white p-4 rounded-xl shadow-md">
+                                    <p class="text-xs font-bold uppercase text-sky-200">3. Tempoh Perjalanan</p>
+                                    <p class="font-mono text-xl font-bold mt-0.5">= 3 Jam</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-sky-300">
+                            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-flag-checkered text-emerald-600"></i> Waktu Ketibaan Bas:
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1">
+                                8:00 AM + 3 jam = <span class="font-bold text-emerald-600 text-sm">11:00 AM (Pagi)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 5: SIMULASI MENGIRA JARAK -->
+        <section id="section-5" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4">
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 5</span>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Simulasi 3: Mengira Jarak</h2>
+                    <p class="text-slate-600 text-sm md:text-base">Situasi: Sebuah motosikal bergerak pada laju tetap <span class="font-bold text-pink-600">50 km/j</span> selama <span class="font-bold text-sky-600">3 jam</span>. Berapakah jumlah jarak yang dilaluinya?</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- MOTORCYCLE TRACK ANIMATION -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl space-y-4">
+                        <div class="relative h-44 bg-gradient-to-b from-amber-400/20 via-slate-800 to-slate-900 rounded-xl border border-slate-700 flex flex-col justify-end p-2 overflow-hidden">
+                            
+                            <!-- Milepost markers 0km, 50km, 100km, 150km -->
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-center z-0">
+                                <div class="flex flex-col items-center">
+                                    <span class="px-2 py-0.5 bg-slate-800 border border-amber-500/50 rounded text-amber-400 font-mono text-xs font-bold">0 km</span>
+                                    <span class="text-[10px] text-slate-400">Mula (0j)</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <span class="px-2 py-0.5 bg-slate-800 border border-amber-500/50 rounded text-amber-400 font-mono text-xs font-bold">50 km</span>
+                                    <span class="text-[10px] text-slate-400">Jam 1</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <span class="px-2 py-0.5 bg-slate-800 border border-amber-500/50 rounded text-amber-400 font-mono text-xs font-bold">100 km</span>
+                                    <span class="text-[10px] text-slate-400">Jam 2</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <span class="px-2 py-0.5 bg-slate-800 border border-amber-500/50 rounded text-amber-400 font-mono text-xs font-bold">150 km</span>
+                                    <span class="text-[10px] text-slate-400">Jam 3</span>
+                                </div>
+                            </div>
+
+                            <!-- Motorcycle Graphic -->
+                            <div id="p5-moto-container" class="absolute bottom-6 left-6 transform -translate-x-1/2 transition-all duration-300 z-10" style="left: 5%;">
+                                <svg class="w-14 h-10 md:w-16 md:h-12 drop-shadow-md" viewBox="0 0 80 50">
+                                    <path d="M20 30 Q 30 15 45 20 L 60 25 L 65 35 Z" fill="#F59E0B"/>
+                                    <circle cx="20" cy="38" r="8" fill="#0F172A" stroke="#FDE68A" stroke-width="2"/>
+                                    <circle cx="60" cy="38" r="8" fill="#0F172A" stroke="#FDE68A" stroke-width="2"/>
+                                    <path d="M35 12 L 40 22 L 30 22 Z" fill="#38BDF8"/>
+                                </svg>
+                            </div>
+
+                            <div class="h-8 bg-slate-700 w-full relative overflow-hidden rounded-b-lg border-t-2 border-amber-400">
+                                <div id="p5-road" class="absolute inset-0 road-striped opacity-50"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <div>
+                                <p class="text-xs text-slate-400">Jumlah Jarak Diukur:</p>
+                                <p class="text-2xl font-bold font-mono text-amber-400"><span id="p5-dist-computed">0</span> km</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="runP5Sim()" id="p5-btn-run" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                                    <i class="fa-solid fa-play"></i> Tunggang Motosikal
+                                </button>
+                                <button onclick="resetP5Sim()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CALCULATION EXPLANATION CARD -->
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6">
+                        <h3 class="font-display font-bold text-slate-900 text-lg flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-square-root-variable text-amber-600"></i> Langkah Pengiraan Jarak (J)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white p-4 rounded-xl border shadow-sm">
+                                <p class="text-xs font-bold text-amber-600 uppercase">Formula Jarak</p>
+                                <p class="font-mono font-bold text-slate-800 text-sm mt-1">Jarak = <span class="text-pink-600">Laju</span> × <span class="text-sky-600">Masa</span></p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm">
+                                <p class="text-xs font-bold text-amber-600 uppercase">Gantikan Nilai</p>
+                                <p class="font-mono font-bold text-slate-800 text-sm mt-1">Jarak = <span class="text-pink-600">50 km/j</span> × <span class="text-sky-600">3 jam</span></p>
+                            </div>
+                            <div class="bg-amber-500 text-white p-4 rounded-xl shadow-md">
+                                <p class="text-xs font-bold uppercase text-amber-100">Jawapan Akhir</p>
+                                <p class="font-mono text-xl font-bold mt-0.5">= 150 km</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 6: EKSPERIMEN INTERAKTIF (MAKMAL LAJU) -->
+        <section id="section-6" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 6</span>
+                        <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Makmal Eksperimen Laju</h2>
+                        <p class="text-slate-600 text-sm md:text-base">Ubah slider laju, masa, atau kunci jarak untuk melihat kesannya secara terus!</p>
+                    </div>
+
+                    <!-- LOCK DISTANCE TOGGLE -->
+                    <div class="bg-slate-100 p-2.5 rounded-2xl border flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-700">Mod Kunci Jarak:</span>
+                        <button onclick="toggleLockDistance()" id="btn-lock-dist" class="px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 bg-slate-300 text-slate-700">
+                            <i id="lock-icon" class="fa-solid fa-lock-open"></i> <span id="lock-text">Nyahkunci</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- CONTROL SLIDERS PANEL -->
+                    <div class="lg:col-span-5 space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        
+                        <!-- Speed Slider -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-pink-700 flex items-center gap-2">
+                                    <i class="fa-solid fa-gauge-high"></i> Laju (L):
+                                </label>
+                                <span class="font-mono font-bold text-pink-600 bg-pink-100 px-3 py-1 rounded-lg text-sm" id="lab-val-speed">60 km/j</span>
+                            </div>
+                            <input type="range" id="lab-slider-speed" min="10" max="120" step="5" value="60" oninput="updateLabValues('speed')" class="w-full accent-pink-500 h-2 bg-slate-200 rounded-lg cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
+                                <span>10 km/j</span>
+                                <span>60 km/j</span>
+                                <span>120 km/j</span>
+                            </div>
+                        </div>
+
+                        <!-- Time Slider -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-sky-700 flex items-center gap-2">
+                                    <i class="fa-solid fa-stopwatch"></i> Masa (M):
+                                </label>
+                                <span class="font-mono font-bold text-sky-600 bg-sky-100 px-3 py-1 rounded-lg text-sm" id="lab-val-time">2.0 jam</span>
+                            </div>
+                            <input type="range" id="lab-slider-time" min="1" max="5" step="0.5" value="2" oninput="updateLabValues('time')" class="w-full accent-sky-500 h-2 bg-slate-200 rounded-lg cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
+                                <span>1 jam</span>
+                                <span>3 jam</span>
+                                <span>5 jam</span>
+                            </div>
+                        </div>
+
+                        <!-- Calculated Distance Box -->
+                        <div id="lab-dist-card" class="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-4 rounded-2xl shadow-md transition-all">
+                            <p class="text-xs font-bold uppercase tracking-wider text-amber-100">Jarak Terhasil (J):</p>
+                            <p class="text-3xl font-bold font-mono mt-1"><span id="lab-val-dist">120</span> <span class="text-base font-sans font-medium">km</span></p>
+                            <p id="lab-dist-sub" class="text-xs text-amber-100 mt-1 font-mono">Formula: 60 km/j × 2.0 jam = 120 km</p>
+                        </div>
+                    </div>
+
+                    <!-- LIVE SIMULATION CANA/SVG ROAD -->
+                    <div class="lg:col-span-7 bg-slate-900 p-6 rounded-2xl text-white flex flex-col justify-between shadow-xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-circle text-[8px] animate-ping mr-1"></i> Simulasi Masa Nyata</span>
+                            <span class="text-xs text-slate-400">Kelajuan Animasi Kereta Berdasarkan Laju</span>
+                        </div>
+
+                        <div class="relative h-48 bg-gradient-to-b from-sky-400 to-slate-800 rounded-xl overflow-hidden border border-slate-700 flex flex-col justify-end p-2">
+                            <!-- Car Graphic -->
+                            <div id="lab-car-container" class="absolute bottom-6 left-6 transform -translate-x-1/2 z-10" style="left: 10%;">
+                                <svg class="w-16 h-10 md:w-20 md:h-12 drop-shadow-md" viewBox="0 0 100 60">
+                                    <path d="M10 35 Q 20 20 40 20 L 65 20 Q 80 25 90 35 L 95 38 Q 98 42 95 48 L 90 48 L 10 48 Z" fill="#10B981"/>
+                                    <path d="M30 22 L 45 22 L 45 32 L 25 32 Z" fill="#E2E8F0"/>
+                                    <path d="M48 22 L 63 22 L 68 32 L 48 32 Z" fill="#E2E8F0"/>
+                                    <circle cx="25" cy="48" r="8" fill="#0F172A" stroke="#6EE7B7" stroke-width="2"/>
+                                    <circle cx="75" cy="48" r="8" fill="#0F172A" stroke="#6EE7B7" stroke-width="2"/>
+                                </svg>
+                            </div>
+
+                            <div class="h-8 bg-slate-700 w-full relative overflow-hidden rounded-b-lg border-t-2 border-emerald-400">
+                                <div id="lab-road" class="absolute inset-0 road-striped opacity-60"></div>
+                            </div>
+                        </div>
+
+                        <!-- Action Controls -->
+                        <div class="flex items-center justify-between gap-4 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <button onclick="runLabSim()" id="lab-btn-drive" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-xl transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Pandu Kereta
+                            </button>
+                            <button onclick="resetLabSim()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-sm rounded-xl transition">
+                                Reset Kedudukan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 7: LATIHAN INTERAKTIF -->
+        <section id="section-7" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 7</span>
+                        <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Latihan & Ujian Kefahaman</h2>
+                        <p class="text-slate-600 text-sm md:text-base">Lengkapkan borang kehadiran di bawah untuk memulakan latihan interaktif.</p>
+                    </div>
+
+                    <!-- Score Badge -->
+                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-3 rounded-2xl shadow-md flex items-center gap-3">
+                        <i class="fa-solid fa-trophy text-amber-300 text-2xl"></i>
+                        <div>
+                            <p class="text-[10px] font-bold uppercase text-purple-200">Markah Terkumpul</p>
+                            <p class="text-xl font-bold font-mono"><span id="quiz-score">0</span> / 60 <span class="text-xs font-sans">mata</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. FORM KEY-IN MAKLUMAT PELAJAR -->
+                <div id="student-form-card" class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl border border-indigo-800/50 space-y-6">
+                    <div class="flex items-center gap-3 border-b border-indigo-800/60 pb-4">
+                        <div class="p-3 bg-indigo-500/20 text-indigo-400 rounded-2xl text-2xl border border-indigo-500/30">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold font-display text-white">Borang Pendaftaran Pelajar</h3>
+                            <p class="text-xs text-indigo-200">Sila masukkan nama penuh, kelas dan nama guru subjek Matematik anda.</p>
+                        </div>
+                    </div>
+
+                    <form id="student-registration-form" onsubmit="handleStudentSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Nama Pelajar -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user text-indigo-400"></i> Nama Pelajar *
+                                </label>
+                                <input type="text" id="input-student-name" required placeholder="Contoh: Muhammad Amir" 
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-indigo-700/60 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-semibold">
+                            </div>
+
+                            <!-- Nama Kelas -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Nama Kelas *
+                                </label>
+                                <input type="text" id="input-student-class" required placeholder="Contoh: 2 Bestari" 
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-indigo-700/60 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-semibold">
+                            </div>
+
+                            <!-- Guru Subjek -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chalkboard-user text-indigo-400"></i> Guru Subjek *
+                                </label>
+                                <input type="text" id="input-teacher-name" required placeholder="Contoh: Cikgu Norizan" 
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-indigo-700/60 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-semibold">
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-circle-check"></i> Hantar Kehadiran & Mula Latihan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- STUDENT INFO BAR (Appears after submission) -->
+                <div id="student-info-bar" class="hidden bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-indigo-600 font-bold uppercase">Pelajar Berdaftar:</p>
+                            <h4 id="display-student-detail" class="text-base font-bold text-slate-800">Muhammad Amir • Kelas 2 Bestari</h4>
+                            <p id="display-teacher-detail" class="text-xs text-slate-500">Guru Subjek: Cikgu Norizan</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="sync-status-badge" class="px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-cloud-arrow-up text-emerald-600"></i> Disimpan dalam Pangkalan Data
+                        </span>
+                        <button onclick="reRegisterStudent()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition">
+                            <i class="fa-solid fa-pen-to-square"></i> Tukar Pelajar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUESTION CARDS CONTAINER (Hidden until student submits form) -->
+                <div id="quiz-container" class="space-y-6 opacity-40 pointer-events-none transition-all duration-300">
+                    <!-- Dynamic Questions loaded by JS -->
+                </div>
+
+                <!-- Quiz Completion Summary -->
+                <div id="quiz-summary" class="hidden bg-emerald-50 border-2 border-emerald-300 rounded-3xl p-8 text-center space-y-4">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-emerald-900 font-display">Tahniah! Anda telah selesai mencuba semua soalan.</h3>
+                    <p class="text-slate-700">Markah akhir anda ialah <span id="final-score" class="font-bold text-emerald-600 text-xl">0</span> daripada 60 mata.</p>
+                    <p class="text-xs text-slate-500 italic"><i class="fa-solid fa-circle-check text-emerald-600"></i> Markah dan rekod anda telah dikemaskini dalam pangkalan data guru.</p>
+                    <button onclick="resetQuiz()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg transition inline-flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Cuba Lagi Latihan
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAHAGIAN 8: DASHBOARD GURU -->
+        <section id="section-8" class="space-y-6 hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-200">
+                <div class="mb-6 border-b pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase tracking-wider">Bahagian 8</span>
+                        <h2 class="text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1">Dashboard Guru & Rekod Kehadiran</h2>
+                        <p class="text-slate-600 text-sm md:text-base">Pantau senarai kehadiran pelajar, kelas, guru subjek dan markah latihan interaktif.</p>
+                    </div>
+
+                    <!-- Quick Analytics Cards -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-sky-50 border border-sky-200 p-3 rounded-2xl flex items-center gap-3">
+                            <i class="fa-solid fa-users text-sky-600 text-2xl"></i>
+                            <div>
+                                <p class="text-[10px] font-bold text-sky-800 uppercase">Jumlah Pelajar</p>
+                                <p class="text-lg font-bold font-mono text-sky-900" id="dash-total-students">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl flex items-center gap-3">
+                            <i class="fa-solid fa-chart-line text-emerald-600 text-2xl"></i>
+                            <div>
+                                <p class="text-[10px] font-bold text-emerald-800 uppercase">Purata Markah</p>
+                                <p class="text-lg font-bold font-mono text-emerald-900" id="dash-avg-score">0 / 60</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GOOGLE SHEETS / ONLINE DB INTEGRATION GUIDE ACCORDION -->
+                <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-md">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="toggleConfigPanel()">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-gears text-emerald-400 text-xl"></i>
+                            <div>
+                                <h3 class="font-bold text-sm text-white">Tetapan Integrasi Google Sheet / Pangkalan Data Online</h3>
+                                <p class="text-xs text-slate-400">Klik di sini untuk menyambungkan borang ini ke Google Sheet secara percuma.</p>
+                            </div>
+                        </div>
+                        <i id="config-chevron" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </div>
+
+                    <div id="config-panel" class="hidden mt-4 pt-4 border-t border-slate-800 text-xs space-y-3">
+                        <p class="text-slate-300">Anda boleh menyambungkan borang ini ke **Google Sheet Web App (Google Apps Script)** secara percuma:</p>
+                        <ol class="list-decimal list-inside space-y-1 text-slate-400 font-mono">
+                            <li>Buka Google Sheets baru & pergi ke Extensions > Apps Script.</li>
+                            <li>Tampal kod Google Apps Script (rujuk panduan).</li>
+                            <li>Deploy sebagai Web App & set ke "Anyone".</li>
+                            <li>Masukkan Webhook URL Google Apps Script anda di bawah:</li>
+                        </ol>
+
+                        <div class="flex gap-2 pt-1">
+                            <input type="text" id="input-script-url" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" 
+                                class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-emerald-400">
+                            <button onclick="saveScriptUrl()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition whitespace-nowrap">
+                                Simpan URL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE FILTERS & CONTROLS -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="dash-search" oninput="filterTeacherDashboard()" placeholder="Cari nama pelajar atau kelas..." 
+                            class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold w-64 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportDashboardToCSV()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-csv"></i> Muat Turun CSV
+                        </button>
+                        <button onclick="clearDashboardData()" class="px-3.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can"></i> Padam Rekod Local
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STUDENTS ATTENDANCE & SCORES TABLE -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">Bil</th>
+                                <th class="p-3.5">Masa Kehadiran</th>
+                                <th class="p-3.5">Nama Pelajar</th>
+                                <th class="p-3.5">Kelas</th>
+                                <th class="p-3.5">Guru Subjek</th>
+                                <th class="p-3.5 text-center">Markah ( / 60)</th>
+                                <th class="p-3.5 text-center">Status Latihan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-table-body" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Dynamic rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800">
+        <p>Aplikasi Pembelajaran Matematik Tingkatan 2 • Bab 9: Laju dan Pecutan (9.1 Laju)</p>
+        <p class="text-slate-500 mt-1">Direka khusus untuk pengajaran interaktif bilik darjah dan paparan projektor.</p>
+    </footer>
+
+    <script>
+        // GLOBAL ANIMATION MULTIPLIER
+        let globalAnimSpeed = 1;
+
+        function setGlobalAnimSpeed(speed) {
+            globalAnimSpeed = speed;
+            document.querySelectorAll('[id^="btn-speed-"]').forEach(btn => {
+                btn.classList.remove('bg-sky-500', 'text-white', 'shadow');
+                btn.classList.add('text-slate-300');
+            });
+            const activeBtn = document.getElementById(`btn-speed-${speed == 0.5 ? '05' : speed}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-sky-500', 'text-white', 'shadow');
+                activeBtn.classList.remove('text-slate-300');
+            }
+        }
+
+        // NAVIGATION TAB SWITCHER (SUPPORTS 8 TABS NOW)
+        function switchTab(tabIndex) {
+            for (let i = 1; i <= 8; i++) {
+                const sec = document.getElementById(`section-${i}`);
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (sec) sec.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-slate-900', 'text-amber-400', 'shadow');
+                    btn.classList.add('text-slate-300');
+                }
+            }
+            const targetSec = document.getElementById(`section-${tabIndex}`);
+            const targetBtn = document.getElementById(`tab-btn-${tabIndex}`);
+            if (targetSec) targetSec.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.classList.add('bg-slate-900', 'text-amber-400', 'shadow');
+                targetBtn.classList.remove('text-slate-300');
+            }
+
+            if (tabIndex === 8) {
+                renderTeacherDashboard();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // BAHAGIAN 1 LOGIC
+        let p1Interval = null;
+        let p1Progress = 0; // 0 to 100%
+        let p1TargetSpeed = 80; // km/h
+        let p1CurrentTime = 0; // hours
+
+        function setP1TargetSpeed(spd) {
+            p1TargetSpeed = spd;
+            document.getElementById('p1-spd-40').className = spd === 40 ? 'px-3 py-1 text-xs font-bold rounded-md bg-pink-500 text-white shadow transition' : 'px-3 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition';
+            document.getElementById('p1-spd-80').className = spd === 80 ? 'px-3 py-1 text-xs font-bold rounded-md bg-pink-500 text-white shadow transition' : 'px-3 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition';
+            document.getElementById('p1-spd-120').className = spd === 120 ? 'px-3 py-1 text-xs font-bold rounded-md bg-pink-500 text-white shadow transition' : 'px-3 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition';
+            
+            document.getElementById('p1-badge-speed').innerText = `${spd} km/j`;
+            document.getElementById('p1-speed-display').innerText = spd;
+        }
+
+        function startP1Sim() {
+            if (p1Interval) clearInterval(p1Interval);
+            document.getElementById('p1-road-stripes').classList.add('animate-road');
+
+            const totalDist = 100; // km total for A -> B
+            const stepMs = 50;
+
+            p1Interval = setInterval(() => {
+                const increment = (p1TargetSpeed / 100) * 0.25 * globalAnimSpeed;
+                p1Progress += increment;
+
+                if (p1Progress >= 100) {
+                    p1Progress = 100;
+                    clearInterval(p1Interval);
+                    document.getElementById('p1-road-stripes').classList.remove('animate-road');
+                }
+
+                const currentDist = (p1Progress / 100) * totalDist;
+                p1CurrentTime = p1TargetSpeed > 0 ? (currentDist / p1TargetSpeed) : 0;
+
+                const carPosPercent = 8 + (p1Progress * 0.82);
+                document.getElementById('p1-car-container').style.left = `${carPosPercent}%`;
+                document.getElementById('p1-dist-display').innerText = currentDist.toFixed(1);
+                document.getElementById('p1-time-display').innerText = p1CurrentTime.toFixed(2);
+                document.getElementById('p1-badge-speed').innerText = `${p1TargetSpeed} km/j`;
+                document.getElementById('p1-speed-display').innerText = p1TargetSpeed;
+            }, stepMs);
+        }
+
+        function resetP1Sim() {
+            if (p1Interval) clearInterval(p1Interval);
+            p1Progress = 0;
+            p1CurrentTime = 0;
+            document.getElementById('p1-car-container').style.left = `8%`;
+            document.getElementById('p1-dist-display').innerText = '0';
+            document.getElementById('p1-time-display').innerText = '0.0';
+            document.getElementById('p1-road-stripes').classList.remove('animate-road');
+        }
+
+        // BAHAGIAN 2 LOGIC
+        function selectTriangleVar(variable) {
+            const resultCard = document.getElementById('triangle-result-card');
+            const cardTag = document.getElementById('tri-card-tag');
+            const cardTitle = document.getElementById('tri-card-title');
+            const cardDesc = document.getElementById('tri-card-desc');
+            const formulaBox = document.getElementById('tri-formula-box');
+
+            if (variable === 'L') {
+                resultCard.className = "bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-pink-500 transition-all duration-300";
+                cardTag.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-500 text-white";
+                cardTag.innerText = "Laju (L) Ditutup";
+                cardTitle.className = "text-2xl font-display font-bold text-pink-400 mb-2";
+                cardTitle.innerText = "Formula Laju (L)";
+                cardDesc.innerHTML = "Apabila anda menutup huruf <span class='font-bold text-pink-400'>L</span>, jawapan yang tinggal ialah <span class='font-bold text-amber-400'>Jarak (J)</span> dibahagi dengan <span class='font-bold text-sky-400'>Masa (M)</span>.";
+                
+                formulaBox.innerHTML = `
+                    <div class="flex items-center gap-4 text-2xl md:text-3xl font-display font-bold animate-fade-in">
+                        <span class="text-pink-400">Laju (L)</span>
+                        <span class="text-slate-400">=</span>
+                        <div class="flex flex-col items-center border-l-2 border-r-2 border-slate-700 px-4">
+                            <span class="text-amber-400 border-b-2 border-white pb-1 px-3">Jarak (J)</span>
+                            <span class="text-sky-400 pt-1 px-3">Masa (M)</span>
+                        </div>
+                    </div>
+                `;
+            } else if (variable === 'M') {
+                resultCard.className = "bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-sky-500 transition-all duration-300";
+                cardTag.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-500 text-white";
+                cardTag.innerText = "Masa (M) Ditutup";
+                cardTitle.className = "text-2xl font-display font-bold text-sky-400 mb-2";
+                cardTitle.innerText = "Formula Masa (M)";
+                cardDesc.innerHTML = "Apabila anda menutup huruf <span class='font-bold text-sky-400'>M</span>, jawapan yang tinggal ialah <span class='font-bold text-amber-400'>Jarak (J)</span> dibahagi dengan <span class='font-bold text-pink-400'>Laju (L)</span>.";
+                
+                formulaBox.innerHTML = `
+                    <div class="flex items-center gap-4 text-2xl md:text-3xl font-display font-bold animate-fade-in">
+                        <span class="text-sky-400">Masa (M)</span>
+                        <span class="text-slate-400">=</span>
+                        <div class="flex flex-col items-center border-l-2 border-r-2 border-slate-700 px-4">
+                            <span class="text-amber-400 border-b-2 border-white pb-1 px-3">Jarak (J)</span>
+                            <span class="text-pink-400 pt-1 px-3">Laju (L)</span>
+                        </div>
+                    </div>
+                `;
+            } else if (variable === 'J') {
+                resultCard.className = "bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-amber-500 transition-all duration-300";
+                cardTag.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500 text-white";
+                cardTag.innerText = "Jarak (J) Ditutup";
+                cardTitle.className = "text-2xl font-display font-bold text-amber-400 mb-2";
+                cardTitle.innerText = "Formula Jarak (J)";
+                cardDesc.innerHTML = "Apabila anda menutup huruf <span class='font-bold text-amber-400'>J</span> di atas, <span class='font-bold text-pink-400'>Laju (L)</span> dan <span class='font-bold text-sky-400'>Masa (M)</span> berada bersebelahan (Didarabkan).";
+                
+                formulaBox.innerHTML = `
+                    <div class="flex items-center gap-3 text-2xl md:text-3xl font-display font-bold animate-fade-in">
+                        <span class="text-amber-400">Jarak (J)</span>
+                        <span class="text-slate-400">=</span>
+                        <span class="text-pink-400">Laju (L)</span>
+                        <span class="text-amber-300 text-4xl">×</span>
+                        <span class="text-sky-400">Masa (M)</span>
+                    </div>
+                `;
+            }
+        }
+
+        function resetTriangle() {
+            selectTriangleVar('L');
+        }
+
+        // BAHAGIAN 3 LOGIC (KIRA LAJU)
+        let p3Interval = null;
+        function runP3Sim() {
+            if (p3Interval) clearInterval(p3Interval);
+            let prog = 0;
+            document.getElementById('p3-road').classList.add('animate-road');
+
+            p3Interval = setInterval(() => {
+                prog += 2 * globalAnimSpeed;
+                if (prog >= 100) {
+                    prog = 100;
+                    clearInterval(p3Interval);
+                    document.getElementById('p3-road').classList.remove('animate-road');
+                }
+                const curKm = (prog / 100) * 120;
+                const curHr = (prog / 100) * 2.0;
+                const posPercent = 5 + (prog * 0.85);
+
+                document.getElementById('p3-car-container').style.left = `${posPercent}%`;
+                document.getElementById('p3-progress-bar').style.width = `${prog}%`;
+                document.getElementById('p3-sim-km').innerText = curKm.toFixed(0);
+                document.getElementById('p3-sim-hr').innerText = curHr.toFixed(1);
+                
+                if (prog > 10) {
+                    document.getElementById('p3-calculated-speed').innerText = `60 km/j`;
+                }
+            }, 50);
+        }
+
+        function resetP3Sim() {
+            if (p3Interval) clearInterval(p3Interval);
+            document.getElementById('p3-car-container').style.left = `5%`;
+            document.getElementById('p3-progress-bar').style.width = `0%`;
+            document.getElementById('p3-sim-km').innerText = '0';
+            document.getElementById('p3-sim-hr').innerText = '0.0';
+            document.getElementById('p3-calculated-speed').innerText = '? km/j';
+            document.getElementById('p3-road').classList.remove('animate-road');
+        }
+
+        // BAHAGIAN 4 LOGIC (KIRA MASA)
+        let p4Interval = null;
+        function runP4Sim() {
+            if (p4Interval) clearInterval(p4Interval);
+            let prog = 0;
+            document.getElementById('p4-road').classList.add('animate-road');
+
+            p4Interval = setInterval(() => {
+                prog += 1.5 * globalAnimSpeed;
+                if (prog >= 100) {
+                    prog = 100;
+                    clearInterval(p4Interval);
+                    document.getElementById('p4-road').classList.remove('animate-road');
+                }
+                const elapsedHr = (prog / 100) * 3.0;
+                const currentHourInt = 8 + Math.floor(elapsedHr);
+                const currentMinInt = Math.floor((elapsedHr % 1) * 60);
+
+                const timeStr = `${String(currentHourInt).padStart(2, '0')}:${String(currentMinInt).padStart(2, '0')} AM`;
+                const posPercent = 5 + (prog * 0.85);
+
+                document.getElementById('p4-bus-container').style.left = `${posPercent}%`;
+                document.getElementById('p4-clock-display').innerText = timeStr;
+                document.getElementById('p4-elapsed-hr').innerText = elapsedHr.toFixed(1);
+            }, 50);
+        }
+
+        function resetP4Sim() {
+            if (p4Interval) clearInterval(p4Interval);
+            document.getElementById('p4-bus-container').style.left = `5%`;
+            document.getElementById('p4-clock-display').innerText = '08:00 AM';
+            document.getElementById('p4-elapsed-hr').innerText = '0.0';
+            document.getElementById('p4-road').classList.remove('animate-road');
+        }
+
+        // BAHAGIAN 5 LOGIC (KIRA JARAK)
+        let p5Interval = null;
+        function runP5Sim() {
+            if (p5Interval) clearInterval(p5Interval);
+            let prog = 0;
+            document.getElementById('p5-road').classList.add('animate-road');
+
+            p5Interval = setInterval(() => {
+                prog += 2 * globalAnimSpeed;
+                if (prog >= 100) {
+                    prog = 100;
+                    clearInterval(p5Interval);
+                    document.getElementById('p5-road').classList.remove('animate-road');
+                }
+                const distComputed = (prog / 100) * 150;
+                const posPercent = 5 + (prog * 0.85);
+
+                document.getElementById('p5-moto-container').style.left = `${posPercent}%`;
+                document.getElementById('p5-dist-computed').innerText = distComputed.toFixed(0);
+            }, 50);
+        }
+
+        function resetP5Sim() {
+            if (p5Interval) clearInterval(p5Interval);
+            document.getElementById('p5-moto-container').style.left = `5%`;
+            document.getElementById('p5-dist-computed').innerText = '0';
+            document.getElementById('p5-road').classList.remove('animate-road');
+        }
+
+        // BAHAGIAN 6 LOGIC (MAKMAL EXPERIMENT)
+        let isDistanceLocked = false;
+        let lockedDistanceValue = 120;
+
+        function toggleLockDistance() {
+            isDistanceLocked = !isDistanceLocked;
+            const btn = document.getElementById('btn-lock-dist');
+            const icon = document.getElementById('lock-icon');
+            const lockText = document.getElementById('lock-text');
+            const distCard = document.getElementById('lab-dist-card');
+
+            if (isDistanceLocked) {
+                const spd = parseFloat(document.getElementById('lab-slider-speed').value);
+                const time = parseFloat(document.getElementById('lab-slider-time').value);
+                lockedDistanceValue = spd * time;
+
+                btn.className = "px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 bg-amber-500 text-white shadow";
+                icon.className = "fa-solid fa-lock";
+                lockText.innerText = "Dikunci (Jarak Tetap)";
+                distCard.className = "bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-2xl shadow-md transition-all";
+            } else {
+                btn.className = "px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 bg-slate-300 text-slate-700";
+                icon.className = "fa-solid fa-lock-open";
+                lockText.innerText = "Nyahkunci";
+                distCard.className = "bg-gradient-to-r from-amber-500 to-amber-600 text-white p-4 rounded-2xl shadow-md transition-all";
+                updateLabValues('speed');
+            }
+        }
+
+        function updateLabValues(changedSource) {
+            const speedSlider = document.getElementById('lab-slider-speed');
+            const timeSlider = document.getElementById('lab-slider-time');
+
+            let spd = parseFloat(speedSlider.value);
+            let time = parseFloat(timeSlider.value);
+
+            if (isDistanceLocked) {
+                if (changedSource === 'speed') {
+                    time = lockedDistanceValue / spd;
+                    if (time < 1) time = 1;
+                    if (time > 5) time = 5;
+                    timeSlider.value = time.toFixed(1);
+                } else if (changedSource === 'time') {
+                    spd = lockedDistanceValue / time;
+                    if (spd < 10) spd = 10;
+                    if (spd > 120) spd = 120;
+                    speedSlider.value = Math.round(spd);
+                }
+            }
+
+            const dist = isDistanceLocked ? lockedDistanceValue : (spd * time);
+
+            document.getElementById('lab-val-speed').innerText = `${Math.round(spd)} km/j`;
+            document.getElementById('lab-val-time').innerText = `${parseFloat(time).toFixed(1)} jam`;
+            document.getElementById('lab-val-dist').innerText = Math.round(dist);
+
+            if (isDistanceLocked) {
+                document.getElementById('lab-dist-sub').innerText = `Jarak dikunci pada ${Math.round(dist)} km (Masa berubah mengikut laju)`;
+            } else {
+                document.getElementById('lab-dist-sub').innerText = `Formula: ${Math.round(spd)} km/j × ${parseFloat(time).toFixed(1)} jam = ${Math.round(dist)} km`;
+            }
+        }
+
+        let labInterval = null;
+        function runLabSim() {
+            if (labInterval) clearInterval(labInterval);
+            let prog = 0;
+            const spd = parseFloat(document.getElementById('lab-slider-speed').value);
+            document.getElementById('lab-road').classList.add('animate-road');
+
+            const stepRate = (spd / 60) * 2 * globalAnimSpeed;
+
+            labInterval = setInterval(() => {
+                prog += stepRate;
+                if (prog >= 100) {
+                    prog = 100;
+                    clearInterval(labInterval);
+                    document.getElementById('lab-road').classList.remove('animate-road');
+                }
+                const posPercent = 10 + (prog * 0.80);
+                document.getElementById('lab-car-container').style.left = `${posPercent}%`;
+            }, 40);
+        }
+
+        function resetLabSim() {
+            if (labInterval) clearInterval(labInterval);
+            document.getElementById('lab-car-container').style.left = `10%`;
+            document.getElementById('lab-road').classList.remove('animate-road');
+        }
+
+        // ==========================================
+        // BAHAGIAN 7: LATIHAN INTERAKTIF & PELAJAR
+        // ==========================================
+        const quizQuestions = [
+            {
+                id: 1,
+                title: "Soalan 1: Mengira Laju",
+                scenario: "Sebuah kereta api memandu sejauh 300 km dalam masa 3 jam. Berapakah laju kereta api tersebut?",
+                targetVar: "Laju",
+                given: "Jarak = 300 km, Masa = 3 jam",
+                correctFormula: "J/M",
+                correctAnswer: 100,
+                unit: "km/j",
+                hints: [
+                    "Petunjuk 1: Anda perlu mencari Laju (L). Gunakan segi tiga formula J-L-M.",
+                    "Petunjuk 2: Tutup huruf L pada segi tiga formula. Anda mendapat Laju = Jarak ÷ Masa.",
+                    "Petunjuk 3: Bahagikan 300 km dengan 3 jam."
+                ],
+                explanation: "Laju = Jarak ÷ Masa = 300 km ÷ 3 jam = 100 km/j."
+            },
+            {
+                id: 2,
+                title: "Soalan 2: Mengira Jarak",
+                scenario: "Ahmad menunggang basikal pada laju 20 km/j selama 2.5 jam. Berapakah jarak yang dilaluinya?",
+                targetVar: "Jarak",
+                given: "Laju = 20 km/j, Masa = 2.5 jam",
+                correctFormula: "L*M",
+                correctAnswer: 50,
+                unit: "km",
+                hints: [
+                    "Petunjuk 1: Soalan meminta anda mencari Jarak (J).",
+                    "Petunjuk 2: Formula Jarak = Laju × Masa.",
+                    "Petunjuk 3: Darabkan 20 dengan 2.5."
+                ],
+                explanation: "Jarak = Laju × Masa = 20 km/j × 2.5 jam = 50 km."
+            },
+            {
+                id: 3,
+                title: "Soalan 3: Mengira Masa",
+                scenario: "Sebuah bas persiaran bergerak sejauh 240 km dengan laju purata 80 km/j. Berapa jamkah perjalanan tersebut?",
+                targetVar: "Masa",
+                given: "Jarak = 240 km, Laju = 80 km/j",
+                correctFormula: "J/L",
+                correctAnswer: 3,
+                unit: "jam",
+                hints: [
+                    "Petunjuk 1: Cari Masa (M).",
+                    "Petunjuk 2: Formula Masa = Jarak ÷ Laju.",
+                    "Petunjuk 3: Bahagikan 240 dengan 80."
+                ],
+                explanation: "Masa = Jarak ÷ Laju = 240 km ÷ 80 km/j = 3 jam."
+            },
+            {
+                id: 4,
+                title: "Soalan 4: Penukaran Unit Laju",
+                scenario: "Pelari pecut berlari sejauh 100 meter dalam masa 10 saat. Berapakah lajunya dalam unit m/s?",
+                targetVar: "Laju",
+                given: "Jarak = 100 m, Masa = 10 s",
+                correctFormula: "J/M",
+                correctAnswer: 10,
+                unit: "m/s",
+                hints: [
+                    "Petunjuk 1: Cari Laju dalam unit meter per saat (m/s).",
+                    "Petunjuk 2: Formula Laju = Jarak ÷ Masa.",
+                    "Petunjuk 3: 100 m ÷ 10 s."
+                ],
+                explanation: "Laju = 100 m ÷ 10 s = 10 m/s."
+            },
+            {
+                id: 5,
+                title: "Soalan 5: Mengira Jarak Penuh",
+                scenario: "Sebuah pesawat terbang pada laju tetap 600 km/j selama 4 jam. Berapakah jumlah jarak penerbangan pesawat itu?",
+                targetVar: "Jarak",
+                given: "Laju = 600 km/j, Masa = 4 jam",
+                correctFormula: "L*M",
+                correctAnswer: 2400,
+                unit: "km",
+                hints: [
+                    "Petunjuk 1: Cari Jarak penerbangan.",
+                    "Petunjuk 2: Formula Jarak = Laju × Masa.",
+                    "Petunjuk 3: 600 × 4."
+                ],
+                explanation: "Jarak = 600 km/j × 4 jam = 2400 km."
+            },
+            {
+                id: 6,
+                title: "Soalan 6: Mengira Masa Tempoh",
+                scenario: "Pemandu teksi memandu sejauh 150 km dengan laju 50 km/j. Berapakah masa (dalam jam) yang diperlukan?",
+                targetVar: "Masa",
+                given: "Jarak = 150 km, Laju = 50 km/j",
+                correctFormula: "J/L",
+                correctAnswer: 3,
+                unit: "jam",
+                hints: [
+                    "Petunjuk 1: Cari Masa yang diambil.",
+                    "Petunjuk 2: Formula Masa = Jarak ÷ Laju.",
+                    "Petunjuk 3: 150 ÷ 50."
+                ],
+                explanation: "Masa = Jarak ÷ Laju = 150 km ÷ 50 km/j = 3 jam."
+            }
+        ];
+
+        let quizState = {};
+        let currentStudent = null; // Holds student details once registered
+
+        // HANDLE STUDENT FORM SUBMISSION
+        function handleStudentSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('input-student-name').value.trim();
+            const className = document.getElementById('input-student-class').value.trim();
+            const teacherName = document.getElementById('input-teacher-name').value.trim();
+
+            if (!name || !className || !teacherName) return;
+
+            currentStudent = {
+                id: 'STU_' + Date.now(),
+                name: name,
+                class: className,
+                teacher: teacherName,
+                timestamp: new Date().toLocaleString('ms-MY'),
+                score: 0,
+                completed: false
+            };
+
+            // Save to LocalStorage DB
+            saveStudentToLocalDb(currentStudent);
+
+            // Send to Google Sheets if Webhook API is set
+            sendDataToGoogleSheet(currentStudent);
+
+            // Update UI State
+            document.getElementById('student-form-card').classList.add('hidden');
+            document.getElementById('student-info-bar').classList.remove('hidden');
+            document.getElementById('display-student-detail').innerText = `${currentStudent.name} • Kelas ${currentStudent.class}`;
+            document.getElementById('display-teacher-detail').innerText = `Guru Subjek: ${currentStudent.teacher}`;
+
+            // Unlock Questions
+            const qContainer = document.getElementById('quiz-container');
+            qContainer.classList.remove('opacity-40', 'pointer-events-none');
+        }
+
+        function reRegisterStudent() {
+            document.getElementById('student-form-card').classList.remove('hidden');
+            document.getElementById('student-info-bar').classList.add('hidden');
+            document.getElementById('quiz-container').classList.add('opacity-40', 'pointer-events-none');
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q) => {
+                quizState[q.id] = { hintStep: 0, score: 0, answered: false };
+
+                const qCard = document.createElement('div');
+                qCard.className = "bg-slate-50 border-2 border-slate-200 rounded-3xl p-6 shadow-sm space-y-4";
+                qCard.id = `q-card-${q.id}`;
+
+                qCard.innerHTML = `
+                    <div class="flex items-start justify-between border-b pb-3">
+                        <div>
+                            <span class="px-2.5 py-0.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full uppercase">${q.title}</span>
+                            <p class="text-slate-800 font-bold text-base mt-2">${q.scenario}</p>
+                            <p class="text-xs text-slate-500 font-semibold mt-1"><i class="fa-solid fa-circle-info text-sky-500"></i> Maklumat: ${q.given}</p>
+                        </div>
+                        <span id="q-score-badge-${q.id}" class="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full">10 Mata</span>
+                    </div>
+
+                    <!-- Step A: Select Formula -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block">Langkah 1: Pilih Formula Yang Betul</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="selectQFormula(${q.id}, 'J/M')" id="q-${q.id}-form-JM" class="q-form-btn p-2.5 rounded-xl border text-xs font-bold bg-white hover:bg-slate-100 text-slate-700">Laju = J ÷ M</button>
+                            <button onclick="selectQFormula(${q.id}, 'J/L')" id="q-${q.id}-form-JL" class="q-form-btn p-2.5 rounded-xl border text-xs font-bold bg-white hover:bg-slate-100 text-slate-700">Masa = J ÷ L</button>
+                            <button onclick="selectQFormula(${q.id}, 'L*M')" id="q-${q.id}-form-LM" class="q-form-btn p-2.5 rounded-xl border text-xs font-bold bg-white hover:bg-slate-100 text-slate-700">Jarak = L × M</button>
+                        </div>
+                    </div>
+
+                    <!-- Step B: Input Value -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block">Langkah 2: Masukkan Jawapan Pengiraan (${q.unit})</label>
+                        <div class="flex gap-3">
+                            <input type="number" id="q-input-${q.id}" placeholder="Jawapan..." class="px-4 py-2.5 rounded-xl border border-slate-300 font-mono text-base font-bold w-full max-w-xs focus:ring-2 focus:ring-purple-400 outline-none">
+                            <button onclick="checkQAnswer(${q.id})" id="q-btn-submit-${q.id}" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm rounded-xl transition shadow">Hantar</button>
+                        </div>
+                    </div>
+
+                    <!-- Hints Panel -->
+                    <div class="pt-1">
+                        <button onclick="showQHint(${q.id})" id="q-btn-hint-${q.id}" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                            <i class="fa-solid fa-lightbulb"></i> <span id="q-hint-label-${q.id}">Perlukan Petunjuk? (Tekan di sini)</span>
+                        </button>
+                        <div id="q-hint-box-${q.id}" class="hidden mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold space-y-1">
+                        </div>
+                    </div>
+
+                    <!-- Feedback Banner -->
+                    <div id="q-feedback-${q.id}" class="hidden p-4 rounded-xl text-xs font-bold space-y-1"></div>
+                `;
+
+                container.appendChild(qCard);
+            });
+        }
+
+        let selectedFormulas = {};
+
+        function selectQFormula(qId, formulaCode) {
+            if (quizState[qId].answered) return;
+            selectedFormulas[qId] = formulaCode;
+
+            ['JM', 'JL', 'LM'].forEach(code => {
+                const btn = document.getElementById(`q-${qId}-form-${code}`);
+                if (btn) {
+                    btn.className = "q-form-btn p-2.5 rounded-xl border text-xs font-bold bg-white hover:bg-slate-100 text-slate-700";
+                }
+            });
+
+            const selBtnCode = formulaCode === 'J/M' ? 'JM' : (formulaCode === 'J/L' ? 'JL' : 'LM');
+            const activeBtn = document.getElementById(`q-${qId}-form-${selBtnCode}`);
+            if (activeBtn) {
+                activeBtn.className = "q-form-btn p-2.5 rounded-xl border-2 border-purple-600 text-xs font-bold bg-purple-50 text-purple-700 shadow-sm";
+            }
+        }
+
+        function showQHint(qId) {
+            const q = quizQuestions.find(item => item.id === qId);
+            const state = quizState[qId];
+            const hintBox = document.getElementById(`q-hint-box-${qId}`);
+            const hintLabel = document.getElementById(`q-hint-label-${qId}`);
+
+            if (state.hintStep < q.hints.length) {
+                state.hintStep++;
+            }
+
+            hintBox.classList.remove('hidden');
+            let hintHtml = '';
+            for (let i = 0; i < state.hintStep; i++) {
+                hintHtml += `<p>• ${q.hints[i]}</p>`;
+            }
+            hintBox.innerHTML = hintHtml;
+
+            if (state.hintStep < q.hints.length) {
+                hintLabel.innerText = `Petunjuk Seterusnya (${state.hintStep}/${q.hints.length})`;
+            } else {
+                hintLabel.innerText = `Petunjuk Maksimum Dicapai`;
+            }
+        }
+
+        function checkQAnswer(qId) {
+            const q = quizQuestions.find(item => item.id === qId);
+            const userForm = selectedFormulas[qId];
+            const userValInput = document.getElementById(`q-input-${qId}`).value;
+            const userVal = parseFloat(userValInput);
+
+            const feedback = document.getElementById(`q-feedback-${qId}`);
+            feedback.classList.remove('hidden');
+
+            if (!userForm) {
+                feedback.className = "p-3 rounded-xl text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+                feedback.innerText = "Sila pilih formula terlebih dahulu di Langkah 1!";
+                return;
+            }
+
+            if (isNaN(userVal)) {
+                feedback.className = "p-3 rounded-xl text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+                feedback.innerText = "Sila masukkan nilai nombor jawapan pengiraan di Langkah 2!";
+                return;
+            }
+
+            const isFormCorrect = (userForm === q.correctFormula);
+            const isValCorrect = (Math.abs(userVal - q.correctAnswer) < 0.1);
+
+            if (isFormCorrect && isValCorrect) {
+                quizState[qId].answered = true;
+                quizState[qId].score = 10;
+
+                feedback.className = "p-4 rounded-xl text-xs font-semibold bg-emerald-100 text-emerald-900 border-2 border-emerald-400 space-y-1";
+                feedback.innerHTML = `
+                    <p class="text-sm font-bold text-emerald-800 flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-600"></i> Tahniah! Jawapan Dan Formula Tepat.</p>
+                    <p class="font-mono">${q.explanation}</p>
+                `;
+
+                document.getElementById(`q-score-badge-${qId}`).className = "text-xs font-bold bg-emerald-500 text-white px-3 py-1 rounded-full shadow";
+                document.getElementById(`q-score-badge-${qId}`).innerText = "10 / 10 Mata";
+                document.getElementById(`q-btn-submit-${qId}`).disabled = true;
+                document.getElementById(`q-btn-submit-${qId}`).className = "px-5 py-2.5 bg-slate-300 text-slate-500 font-bold text-sm rounded-xl cursor-not-allowed";
+
+            } else {
+                feedback.className = "p-4 rounded-xl text-xs font-semibold bg-rose-100 text-rose-900 border-2 border-rose-300 space-y-1";
+                let errText = "Jawapan belum tepat. ";
+                if (!isFormCorrect) errText += "Pilihan formula anda kurang betul. ";
+                if (!isValCorrect) errText += "Pengiraan nilai nombor tidak tepat. ";
+                errText += "Sila semak semula atau gunakan petunjuk!";
+
+                feedback.innerHTML = `<p class="font-bold"><i class="fa-solid fa-circle-xmark text-rose-600"></i> ${errText}</p>`;
+            }
+
+            updateTotalQuizScore();
+        }
+
+        function updateTotalQuizScore() {
+            let total = 0;
+            let countAnswered = 0;
+            Object.keys(quizState).forEach(id => {
+                total += quizState[id].score;
+                if (quizState[id].answered) countAnswered++;
+            });
+
+            document.getElementById('quiz-score').innerText = total;
+
+            if (currentStudent) {
+                currentStudent.score = total;
+                currentStudent.completed = (countAnswered === quizQuestions.length);
+                saveStudentToLocalDb(currentStudent);
+                sendDataToGoogleSheet(currentStudent);
+            }
+
+            if (countAnswered === quizQuestions.length) {
+                document.getElementById('quiz-summary').classList.remove('hidden');
+                document.getElementById('final-score').innerText = total;
+            }
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-summary').classList.add('hidden');
+            selectedFormulas = {};
+            renderQuiz();
+            updateTotalQuizScore();
+        }
+
+        // ==========================================
+        // LOCAL DATABASE & GOOGLE SHEETS STORAGE
+        // ==========================================
+        function getLocalDatabase() {
+            const data = localStorage.getItem('app_laju_students_db');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveStudentToLocalDb(studentObj) {
+            let db = getLocalDatabase();
+            const existingIdx = db.findIndex(s => s.id === studentObj.id);
+            if (existingIdx >= 0) {
+                db[existingIdx] = studentObj;
+            } else {
+                db.push(studentObj);
+            }
+            localStorage.setItem('app_laju_students_db', JSON.stringify(db));
+        }
+
+        function toggleConfigPanel() {
+            const panel = document.getElementById('config-panel');
+            const chevron = document.getElementById('config-chevron');
+            panel.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function saveScriptUrl() {
+            const url = document.getElementById('input-script-url').value.trim();
+            if (url) {
+                localStorage.setItem('app_laju_google_script_url', url);
+                alert('URL Google Script berjaya disimpan!');
+            }
+        }
+
+        function sendDataToGoogleSheet(studentData) {
+            const scriptUrl = localStorage.getItem('app_laju_google_script_url');
+            if (!scriptUrl) return; // Skip if no API URL configured
+
+            try {
+                fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(studentData)
+                }).catch(err => console.log('Sheet Sync Exception:', err));
+            } catch (err) {
+                console.log('Sheet Sync Error:', err);
+            }
+        }
+
+        // ==========================================
+        // BAHAGIAN 8: DASHBOARD GURU RENDER LOGIC
+        // ==========================================
+        function renderTeacherDashboard() {
+            const db = getLocalDatabase();
+            const tableBody = document.getElementById('dash-table-body');
+            tableBody.innerHTML = '';
+
+            document.getElementById('dash-total-students').innerText = db.length;
+
+            if (db.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center p-8 text-slate-400">
+                            <i class="fa-solid fa-folder-open text-3xl mb-2 block text-slate-300"></i>
+                            Belum ada rekod pelajar. Pelajar perlu mengisi borang di Bahagian 7.
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('dash-avg-score').innerText = '0 / 60';
+                return;
+            }
+
+            let totalScoresAll = 0;
+            const searchTerm = (document.getElementById('dash-search').value || '').toLowerCase();
+
+            const filteredDb = db.filter(s => 
+                s.name.toLowerCase().includes(searchTerm) || 
+                s.class.toLowerCase().includes(searchTerm) ||
+                s.teacher.toLowerCase().includes(searchTerm)
+            );
+
+            filteredDb.forEach((stu, idx) => {
+                totalScoresAll += stu.score;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+
+                tr.innerHTML = `
+                    <td class="p-3.5 font-bold text-slate-500">${idx + 1}</td>
+                    <td class="p-3.5 text-slate-500 font-mono text-[11px]">${stu.timestamp}</td>
+                    <td class="p-3.5 font-bold text-slate-900">${stu.name}</td>
+                    <td class="p-3.5 font-semibold text-slate-700"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200">${stu.class}</span></td>
+                    <td class="p-3.5 text-slate-600">${stu.teacher}</td>
+                    <td class="p-3.5 text-center font-mono font-bold text-purple-700 text-sm">${stu.score} / 60</td>
+                    <td class="p-3.5 text-center">
+                        ${stu.completed 
+                            ? '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]"><i class="fa-solid fa-check"></i> Selesai</span>'
+                            : '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]"><i class="fa-solid fa-spinner animate-spin"></i> Dalam Proses</span>'}
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            const avg = db.length > 0 ? (totalScoresAll / db.length).toFixed(1) : 0;
+            document.getElementById('dash-avg-score').innerText = `${avg} / 60`;
+
+            // Load saved Script URL if exists
+            const savedUrl = localStorage.getItem('app_laju_google_script_url');
+            if (savedUrl) {
+                document.getElementById('input-script-url').value = savedUrl;
+            }
+        }
+
+        function filterTeacherDashboard() {
+            renderTeacherDashboard();
+        }
+
+        function clearDashboardData() {
+            if (confirm("Adakah anda pasti untuk memadam semua rekod pelajar dari local storage?")) {
+                localStorage.removeItem('app_laju_students_db');
+                renderTeacherDashboard();
+            }
+        }
+
+        function exportDashboardToCSV() {
+            const db = getLocalDatabase();
+            if (db.length === 0) {
+                alert("Tiada rekod untuk dimuat turun!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Bil,Masa Kehadiran,Nama Pelajar,Kelas,Guru Subjek,Markah,Status\n";
+            db.forEach((s, idx) => {
+                const statusStr = s.completed ? "Selesai" : "Dalam Proses";
+                csvContent += `${idx + 1},"${s.timestamp}","${s.name}","${s.class}","${s.teacher}",${s.score},${statusStr}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `rekod_latihan_laju_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            selectTriangleVar('L');
+            updateLabValues('speed');
+            renderQuiz();
+
+            // Load script URL into config input if exists
+            const savedUrl = localStorage.getItem('app_laju_google_script_url');
+            if (savedUrl) {
+                document.getElementById('input-script-url').value = savedUrl;
+            }
+        };
+    </script>
+</body>
+</html>
