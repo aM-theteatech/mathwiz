@@ -9,8 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js for Teacher Dashboard analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Sheets is accessed through the Apps Script JSONP API configured below. -->
 
   <style>
     /* Design Tokens & Theme Setup */
@@ -426,7 +425,7 @@
         <div class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-[#8b949e] uppercase mb-1">Teacher Passcode</label>
-            <input type="password" id="teacherPassCode" placeholder="Enter code (Demo Passcode: cikgu123)" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+            <input type="password" id="teacherPassCode" placeholder="Enter dashboard key" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
           </div>
           <button type="button" id="btnLoginTeacher" class="w-full bg-[#8a2be2] hover:bg-[#a04bf5] text-white font-bold p-3 rounded-lg text-sm transition-colors">
             Log In to Dashboard
@@ -468,23 +467,19 @@
         <!-- Student Submission Table -->
         <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
-            <h3 class="text-base font-bold text-white">Student Submission Records (Supabase Sync)</h3>
-            <button type="button" id="btnRefreshSupabase" class="bg-[#0d1117] hover:bg-[#30363d] border border-[#30363d] text-teal-400 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1">
-              🔄 Refresh Supabase Data
+            <h3 class="text-base font-bold text-white">Student Submission Records (Google Sheets)</h3>
+            <button type="button" id="btnRefreshSheets" class="bg-[#0d1117] hover:bg-[#30363d] border border-[#30363d] text-teal-400 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1">
+              🔄 Refresh Google Sheets Data
             </button>
           </div>
 
-          <!-- Supabase Key Settings Box inside Teacher View -->
+          <!-- Google Sheets connection status -->
           <div class="mb-4 p-3.5 bg-[#0d1117] border border-[#30363d] rounded-lg text-xs space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-purple-300">⚡ Supabase Database Connection</span>
-              <span id="supabaseConnectionBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">Anon Key Required</span>
+              <span class="font-bold text-purple-300">📊 Google Sheets Connection</span>
+              <span id="sheetsConnectionBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">Not checked</span>
             </div>
-            <p class="text-[#8b949e]">URL: <code class="text-teal-300">https://woyidtahqksjphyzktmt.supabase.co</code></p>
-            <div class="flex gap-2">
-              <input type="password" id="inputSupabaseKey" placeholder="Enter Supabase Anon / Public Key..." class="flex-1 bg-[#161b22] border border-[#30363d] rounded p-2 text-white focus:outline-none focus:border-[#8a2be2]">
-              <button type="button" id="btnSaveSupabaseKey" class="bg-[#2ea44f] hover:bg-[#3fb950] text-white px-3 py-2 rounded font-bold">Save Key</button>
-            </div>
+            <p class="text-[#8b949e]">Records are read from the same Apps Script web app used for registration and assessment.</p>
           </div>
 
           <div class="overflow-x-auto">
@@ -512,33 +507,28 @@
 
   <script>
     const STORAGE_KEY_STUDENT = "math_f3_ch9_student";
-    const STORAGE_KEY_RECORDS = "math_f3_ch9_records";
-    const STORAGE_KEY_SUPABASE = "math_f3_ch9_supabase_key";
+    /* Replace this value after deploying Code.gs as a Google Apps Script web app. */
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm8l0Q8m_jN7pjB1I-3KbAfmlZCi0n5XXu3C3gxvK37QV1vx9HK0caonNxEU2YldqcVg/exec";
+    const JSONP_TIMEOUT_MS = 15000;
 
-    const SUPABASE_URL = "https://woyidtahqksjphyzktmt.supabase.co";
-    let supabaseKey = localStorage.getItem(STORAGE_KEY_SUPABASE) || "";
-    let supabaseClient = null;
-
-    let loadedTeachers = [];
-    let loadedClasses = [];
-
-    function initSupabaseClient() {
-      if (window.supabase && supabaseKey) {
-        try {
-          supabaseClient = window.supabase.createClient(SUPABASE_URL, supabaseKey);
-          return true;
-        } catch (err) {
-          console.error("Supabase client init error:", err);
-        }
-      }
-      return false;
-    }
+    const loadedTeachers = [
+      { id: "amylia", teacher_name: "Ms. Amylia" }
+    ];
+    const loadedClasses = [
+      { class_name: "3A" },
+      { class_name: "3B" },
+      { class_name: "3C" },
+      { class_name: "3D" },
+	  { class_name: "3E" },
+	  { class_name: "3F" },
+	  { class_name: "3G" }
+    ];
 
     let currentStudent = JSON.parse(localStorage.getItem(STORAGE_KEY_STUDENT)) || null;
-    let studentRecords = JSON.parse(localStorage.getItem(STORAGE_KEY_RECORDS)) || [];
+    let studentRecords = [];
+    let teacherDashboardKey = "";
 
     document.addEventListener("DOMContentLoaded", () => {
-      initSupabaseClient();
       initTabSystem();
       initExploreCanvas();
       initParallelCanvas();
@@ -546,7 +536,6 @@
       initAssessmentSection();
       initTeacherDashboard();
 
-      /* Fetch teachers and classes from Supabase */
       fetchTeachersAndClasses();
 
       window.addEventListener("resize", () => {
@@ -554,59 +543,15 @@
         drawParallel();
       });
 
-      if (currentStudent) {
+      if (currentStudent && currentStudent.registrationId) {
         updateStudentHeaderBadges(currentStudent.name, currentStudent.className);
         unlockQuestionsCard(currentStudent);
       }
     });
 
-    async function fetchTeachersAndClasses() {
+    function fetchTeachersAndClasses() {
       const classSelect = document.getElementById("regClassName");
       const teacherSelect = document.getElementById("regTeacherName");
-
-      const defaultTeachers = [
-        { id: "00000000-0000-0000-0000-000000000001", teacher_name: "Ms. Amylia" }      
-      ];
-
-      const defaultClasses = [
-        { class_name: "3 Bestari" },
-        { class_name: "3 Cemerlang" },
-        { class_name: "3 Dinamik" },
-        { class_name: "3 Inovatif" }
-      ];
-
-      if (supabaseClient) {
-        try {
-          const { data: teachersData, error: tErr } = await supabaseClient
-            .from('teachers')
-            .select('id, teacher_name');
-
-          const { data: classesData, error: cErr } = await supabaseClient
-            .from('classes')
-            .select('id, class_name, teacher_id');
-
-          if (!tErr && teachersData && teachersData.length > 0) {
-            loadedTeachers = teachersData;
-          } else {
-            loadedTeachers = defaultTeachers;
-          }
-
-          if (!cErr && classesData && classesData.length > 0) {
-            loadedClasses = classesData;
-          } else {
-            loadedClasses = defaultClasses;
-          }
-        } catch (e) {
-          console.warn("Could not load teachers/classes from Supabase, using defaults:", e);
-          loadedTeachers = defaultTeachers;
-          loadedClasses = defaultClasses;
-        }
-      } else {
-        loadedTeachers = defaultTeachers;
-        loadedClasses = defaultClasses;
-      }
-
-      /* Populate dropdowns */
       teacherSelect.innerHTML = `<option value="">-- Select Teacher --</option>` +
         loadedTeachers.map(t => `<option value="${t.id}">${t.teacher_name}</option>`).join('');
 
@@ -614,18 +559,57 @@
         loadedClasses.map(c => `<option value="${c.class_name}">${c.class_name}</option>`).join('');
     }
 
-    if (studentRecords.length === 0) {
-      studentRecords = [
-        {
-          name: "Ahmad Danish",
-          className: "3 Bestari",
-          teacherName: "Ms. Norizan",
-          score: "3/3",
-          percentage: 100,
-          status: "Excellent",
-          created_at: new Date().toISOString()
+    function isScriptConfigured() {
+      return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(SCRIPT_URL);
+    }
+
+    function callSheetsApi(params) {
+      return new Promise((resolve, reject) => {
+        if (!isScriptConfigured()) {
+          reject(new Error("Set SCRIPT_URL to your deployed Apps Script /exec URL first."));
+          return;
         }
-      ];
+
+        const callbackName = `sheetsCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement("script");
+        const query = new URLSearchParams({ ...params, callback: callbackName });
+        let settled = false;
+
+        const cleanup = () => {
+          delete window[callbackName];
+          script.remove();
+        };
+
+        const timer = setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          reject(new Error("Google Sheets request timed out."));
+        }, JSONP_TIMEOUT_MS);
+
+        window[callbackName] = data => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          cleanup();
+          if (!data || data.result !== "success") {
+            reject(new Error(data?.message || "Google Sheets returned an error."));
+            return;
+          }
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error("Unable to connect to Google Apps Script."));
+        };
+
+        script.src = `${SCRIPT_URL}?${query.toString()}`;
+        document.head.appendChild(script);
+      });
     }
 
     function updateStudentHeaderBadges(name, className) {
@@ -662,25 +646,30 @@
     function initTeacherDashboard() {
       const loginBtn = document.getElementById("btnLoginTeacher");
       const logoutBtn = document.getElementById("btnLogoutTeacher");
-      const saveKeyBtn = document.getElementById("btnSaveSupabaseKey");
-      const refreshBtn = document.getElementById("btnRefreshSupabase");
-      const keyInput = document.getElementById("inputSupabaseKey");
-
-      if (keyInput && supabaseKey) {
-        keyInput.value = supabaseKey;
-      }
+      const refreshBtn = document.getElementById("btnRefreshSheets");
 
       if (loginBtn) {
-        loginBtn.addEventListener("click", () => {
+        loginBtn.addEventListener("click", async () => {
           const pass = document.getElementById("teacherPassCode").value.trim();
           const msg = document.getElementById("teacherLoginMsg");
-          if (pass === "cikgu123" || pass === "admin") {
+          if (!pass) {
+            msg.innerText = "Enter the dashboard key configured in Apps Script.";
+            msg.classList.remove("hidden");
+            return;
+          }
+          teacherDashboardKey = pass;
+          loginBtn.disabled = true;
+          try {
+            await renderDashboardMetrics();
             document.getElementById("teacherLoginForm").classList.add("hidden");
             document.getElementById("teacherDashboardView").classList.remove("hidden");
-            renderDashboardMetrics();
-          } else {
-            msg.innerText = "Invalid passcode. (Use: cikgu123)";
+            msg.classList.add("hidden");
+          } catch (error) {
+            teacherDashboardKey = "";
+            msg.innerText = error.message;
             msg.classList.remove("hidden");
+          } finally {
+            loginBtn.disabled = false;
           }
         });
       }
@@ -689,20 +678,7 @@
         logoutBtn.addEventListener("click", () => {
           document.getElementById("teacherDashboardView").classList.add("hidden");
           document.getElementById("teacherLoginForm").classList.remove("hidden");
-        });
-      }
-
-      if (saveKeyBtn) {
-        saveKeyBtn.addEventListener("click", () => {
-          const keyVal = keyInput.value.trim();
-          if (keyVal) {
-            localStorage.setItem(STORAGE_KEY_SUPABASE, keyVal);
-            supabaseKey = keyVal;
-            initSupabaseClient();
-            updateSupabaseBadge(true);
-            fetchTeachersAndClasses();
-            renderDashboardMetrics();
-          }
+          teacherDashboardKey = "";
         });
       }
 
@@ -713,15 +689,15 @@
       }
     }
 
-    function updateSupabaseBadge(isConnected) {
-      const badge = document.getElementById("supabaseConnectionBadge");
+    function updateSheetsBadge(isConnected, text) {
+      const badge = document.getElementById("sheetsConnectionBadge");
       if (!badge) return;
-      if (isConnected && supabaseClient) {
+      if (isConnected) {
         badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-green-950 text-green-300 border border-green-700";
-        badge.innerText = "⚡ Supabase Connected";
+        badge.innerText = text || "Connected";
       } else {
         badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700";
-        badge.innerText = "Anon Key Required";
+        badge.innerText = text || "Connection error";
       }
     }
 
@@ -914,21 +890,6 @@
           fb.innerHTML = "<strong>Try Again.</strong> Compare the given equation with the standard form <span class='math-var'>y</span> = <span class='math-var'>m</span><span class='math-var'>x</span> + <span class='math-var'>c</span>. The coefficient of <span class='math-var'>x</span> is the gradient.";
         }
 
-        /* Save practice attempt if logged in */
-        if (currentStudent && currentStudent.studentId && supabaseClient) {
-          try {
-            await supabaseClient.from('practice_progress').insert([{
-              student_id: currentStudent.studentId,
-              session_id: currentStudent.sessionId || null,
-              question_id: "P1",
-              question_text: "Gradient m for y = 5x - 7",
-              student_answer: val,
-              correct_answer: "5",
-              is_correct: isCorrect,
-              attempt_number: 1
-            }]);
-          } catch(e) { console.warn("Practice progress sync error:", e); }
-        }
       });
 
       document.getElementById("btnCheckPractice2").addEventListener("click", async () => {
@@ -945,20 +906,6 @@
           fb.innerHTML = "<strong>Not quite right.</strong> Please express in the form <span class='math-var'>y</span> = ... first by dividing both sides by 2.";
         }
 
-        if (currentStudent && currentStudent.studentId && supabaseClient) {
-          try {
-            await supabaseClient.from('practice_progress').insert([{
-              student_id: currentStudent.studentId,
-              session_id: currentStudent.sessionId || null,
-              question_id: "P2",
-              question_text: "y-intercept for 2y = 6x + 8",
-              student_answer: val,
-              correct_answer: "4",
-              is_correct: isCorrect,
-              attempt_number: 1
-            }]);
-          } catch(e) { console.warn("Practice progress sync error:", e); }
-        }
       });
     }
 
@@ -982,69 +929,38 @@
         const selectedTeacher = loadedTeachers.find(t => t.id === teacherId);
         const teacherName = selectedTeacher ? selectedTeacher.teacher_name : "Mathematics Teacher";
 
-        let studentId = null;
-        let sessionId = null;
+        btnStart.disabled = true;
+        statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-purple-950/50 border-purple-800 text-purple-300 block";
+        statusMsg.innerText = "Saving registration to Google Sheets...";
 
-        /* Save into students, learning_sessions, and attendance tables */
-        if (supabaseClient) {
-          try {
-            statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-purple-950/50 border-purple-800 text-purple-300 block";
-            statusMsg.innerText = "Registering attendance in Supabase database...";
+        try {
+          const result = await callSheetsApi({
+            action: "register",
+            Fullname: name,
+            stuclass: className,
+            Teacher: teacherName
+          });
 
-            /* 1. Insert Student */
-            const { data: sData, error: sErr } = await supabaseClient
-              .from('students')
-              .insert([{
-                full_name: name,
-                class_name: className,
-                teacher_id: teacherId
-              }])
-              .select('id')
-              .single();
-
-            if (!sErr && sData) {
-              studentId = sData.id;
-
-              /* 2. Insert Learning Session */
-              const { data: sessData, error: sessErr } = await supabaseClient
-                .from('learning_sessions')
-                .insert([{
-                  student_id: studentId
-                }])
-                .select('id')
-                .single();
-
-              if (!sessErr && sessData) {
-                sessionId = sessData.id;
-              }
-
-              /* 3. Insert Attendance */
-              await supabaseClient
-                .from('attendance')
-                .insert([{
-                  student_id: studentId,
-                  session_id: sessionId,
-                  activity_name: 'Chapter 9: Straight Lines'
-                }]);
-            }
-          } catch(e) {
-            console.warn("Supabase attendance registration error:", e);
-          }
+          currentStudent = {
+            name,
+            className,
+            teacherName,
+            teacherId,
+            registrationId: result.registrationId,
+            registeredAt: result.date || new Date().toISOString()
+          };
+          localStorage.setItem(STORAGE_KEY_STUDENT, JSON.stringify(currentStudent));
+          statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-green-950/50 border-green-700 text-green-300 block";
+          statusMsg.innerText = "Registration saved successfully.";
+          updateStudentHeaderBadges(name, className);
+          unlockQuestionsCard(currentStudent);
+        } catch (error) {
+          console.error("Registration error:", error);
+          statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-red-950/50 border-red-800 text-red-300 block";
+          statusMsg.innerText = `Registration was not saved: ${error.message}`;
+        } finally {
+          btnStart.disabled = false;
         }
-
-        currentStudent = { 
-          name, 
-          className, 
-          teacherName, 
-          teacherId, 
-          studentId, 
-          sessionId,
-          registeredAt: new Date().toISOString()
-        };
-        localStorage.setItem(STORAGE_KEY_STUDENT, JSON.stringify(currentStudent));
-
-        updateStudentHeaderBadges(name, className);
-        unlockQuestionsCard(currentStudent);
       });
 
       btnReset.addEventListener("click", () => {
@@ -1073,7 +989,7 @@
         }
 
         const isQ1Correct = q1 === "-3";
-        const isQ2Correct = q2 === "-6" || q2 === "6";
+        const isQ2Correct = q2 === "-6";
         const isQ3Correct = q3 === "yes" || q3 === "ya" || q3 === "y";
 
         let score = 0;
@@ -1082,152 +998,66 @@
         if (isQ3Correct) score++;
 
         const percentage = Math.round((score / 3) * 100);
-        const totalMarks = 30;
         const marksObtained = score * 10;
-
-        let supabaseStatusMsg = "";
-
-        /* Sync to assessment_results & assessment_answers */
-        if (supabaseClient && currentStudent && currentStudent.studentId) {
-          try {
-            const { data: resData, error: resErr } = await supabaseClient
-              .from('assessment_results')
-              .insert([{
-                student_id: currentStudent.studentId,
-                session_id: currentStudent.sessionId || null,
-                total_questions: 3,
-                correct_answers: score,
-                total_marks: totalMarks,
-                marks_obtained: marksObtained,
-                percentage: percentage
-              }])
-              .select('id')
-              .single();
-
-            if (!resErr && resData) {
-              const assessmentId = resData.id;
-
-              await supabaseClient.from('assessment_answers').insert([
-                {
-                  assessment_id: assessmentId,
-                  question_id: "Q1",
-                  question_text: "Gradient value for y = -3x + 8",
-                  student_answer: q1,
-                  correct_answer: "-3",
-                  is_correct: isQ1Correct,
-                  marks_awarded: isQ1Correct ? 10 : 0,
-                  learning_objective: "Identify gradient m"
-                },
-                {
-                  assessment_id: assessmentId,
-                  question_id: "Q2",
-                  question_text: "y-intercept for 2x - y = 6",
-                  student_answer: q2,
-                  correct_answer: "-6",
-                  is_correct: isQ2Correct,
-                  marks_awarded: isQ2Correct ? 10 : 0,
-                  learning_objective: "Find y-intercept"
-                },
-                {
-                  assessment_id: assessmentId,
-                  question_id: "Q3",
-                  question_text: "Parallel condition for y = 4x + 1 and y = 4x - 9",
-                  student_answer: q3,
-                  correct_answer: "Yes",
-                  is_correct: isQ3Correct,
-                  marks_awarded: isQ3Correct ? 10 : 0,
-                  learning_objective: "Parallel lines"
-                }
-              ]);
-
-              supabaseStatusMsg = "<br><span class='text-teal-300 text-xs'>✅ Successfully synced to Supabase Database (assessment_results & assessment_answers)!</span>";
-            } else {
-              supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
-            }
-          } catch(e) {
-            console.error("Assessment save error:", e);
-            supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
-          }
-        } else {
-          supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
+        if (!currentStudent || !currentStudent.registrationId) {
+          resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-red-950/50 border-red-800 text-red-300 block";
+          resDiv.textContent = "Registration ID is missing. Please select Change Student and register again.";
+          return;
         }
 
-        resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-teal-950/80 border-teal-600 block";
-        resDiv.innerHTML = `
-          <h4 class="text-lg font-bold text-teal-300 mb-1">Assessment Submitted Successfully!</h4>
-          <p class="text-sm text-white">Score: <strong>${score} / 3</strong> (${percentage}%)</p>
-          <p class="text-xs text-[#8b949e] mt-1">${supabaseStatusMsg}</p>
-        `;
+        btnSubmit.disabled = true;
+        resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-purple-950/50 border-purple-800 text-purple-300 block";
+        resDiv.textContent = "Saving assessment mark to Google Sheets...";
+
+        try {
+          await callSheetsApi({
+            action: "assessment",
+            registrationId: currentStudent.registrationId,
+            Mark: String(marksObtained)
+          });
+          resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-teal-950/80 border-teal-600 block";
+          resDiv.innerHTML = `
+            <h4 class="text-lg font-bold text-teal-300 mb-1">Assessment Saved Successfully!</h4>
+            <p class="text-sm text-white">Score: <strong>${score} / 3</strong> (${percentage}%)</p>
+            <p class="text-xs text-teal-300 mt-1">The Mark column was updated in the student's registration row.</p>
+          `;
+        } catch (error) {
+          console.error("Assessment save error:", error);
+          resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-red-950/50 border-red-800 text-red-300 block";
+          resDiv.innerHTML = `<strong>Mark was not saved.</strong><br>${error.message}<br><span class="text-xs">Check the connection, then press Submit Assessment Answers again.</span>`;
+        } finally {
+          btnSubmit.disabled = false;
+        }
       });
     }
 
     async function renderDashboardMetrics() {
       const tbody = document.getElementById("studentRecordsTableBody");
-      tbody.innerHTML = "<tr><td colspan='6' class='p-3 text-center text-[#8b949e]'>Loading data from Supabase database...</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='6' class='p-3 text-center text-[#8b949e]'>Loading data from Google Sheets...</td></tr>";
 
       let displayRecords = [];
 
-      if (supabaseClient) {
-        try {
-          /* Query attendance records joined with students & teachers */
-          const { data: attData, error: attErr } = await supabaseClient
-            .from('attendance')
-            .select(`
-              id,
-              attendance_time,
-              activity_name,
-              students (
-                id,
-                full_name,
-                class_name,
-                teachers (
-                  teacher_name
-                )
-              )
-            `)
-            .order('created_at', { ascending: false });
-
-          /* Query assessment results */
-          const { data: resData, error: resErr } = await supabaseClient
-            .from('assessment_results')
-            .select('*');
-
-          if (!attErr && attData && attData.length > 0) {
-            displayRecords = attData.map(att => {
-              const student = att.students || {};
-              const teacher = student.teachers || {};
-
-              /* Match assessment result for this student */
-              const studentRes = resData ? resData.find(r => r.student_id === student.id) : null;
-
-              return {
-                name: student.full_name || "Anon Student",
-                className: student.class_name || "-",
-                teacherName: teacher.teacher_name || "-",
-                activity: att.activity_name || "Chapter 9: Straight Lines",
-                score: studentRes ? `${studentRes.correct_answers}/3 (${studentRes.percentage}%)` : "Not Completed",
-                percentage: studentRes ? studentRes.percentage : null,
-                created_at: att.attendance_time
-              };
-            });
-            updateSupabaseBadge(true);
-          }
-        } catch (e) {
-          console.warn("Could not fetch joined records from Supabase:", e);
-        }
-      }
-
-      /* Fallback to local storage if no Supabase records were returned */
-      if (displayRecords.length === 0 && studentRecords.length > 0) {
-        displayRecords = studentRecords.map(r => ({
-          name: r.name,
-          className: r.className,
-          teacherName: r.teacherName,
-          activity: "Chapter 9: Straight Lines",
-          score: r.score,
-          percentage: r.percentage,
-          created_at: r.created_at
-        }));
+      try {
+        const result = await callSheetsApi({ action: "list", dashboardKey: teacherDashboardKey });
+        displayRecords = (result.records || []).map(record => {
+          const mark = record.Mark === "" || record.Mark === null ? null : Number(record.Mark);
+          const percentage = Number.isFinite(mark) ? Math.round((mark / 30) * 100) : null;
+          return {
+            name: record.Fullname || "-",
+            className: record.class || "-",
+            teacherName: record.Teacher || "-",
+            activity: "Chapter 9: Straight Lines",
+            score: percentage === null ? "Not Completed" : `${mark}/30 (${percentage}%)`,
+            percentage,
+            created_at: record.Date || ""
+          };
+        });
+        updateSheetsBadge(true, "Connected");
+      } catch (error) {
+        console.error("Dashboard load error:", error);
+        updateSheetsBadge(false, "Connection error");
+        tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-red-300">Unable to load Google Sheets records: ${error.message}</td></tr>`;
+        throw error;
       }
 
       tbody.innerHTML = "";
@@ -1237,6 +1067,9 @@
 
       const completedCount = displayRecords.filter(r => r.percentage !== null).length;
       document.getElementById("dashCompletedAssessments").innerText = completedCount;
+      const passedCount = displayRecords.filter(r => r.percentage !== null && r.percentage >= 40).length;
+      const passRate = completedCount ? Math.round((passedCount / completedCount) * 100) : 0;
+      document.getElementById("dashPassRate").innerText = `${passRate}%`;
 
       if (total > 0) {
         const completedWithScore = displayRecords.filter(r => r.percentage !== null);
@@ -1259,62 +1092,11 @@
           tbody.appendChild(tr);
         });
       } else {
+        document.getElementById("dashAvgScore").innerText = "0%";
         tbody.innerHTML = "<tr><td colspan='6' class='p-3 text-center text-[#8b949e]'>No records found in the database.</td></tr>";
       }
     }
   </script>
 
-    <script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbw1737_zBfgioblxEp6X4SxvweE2XqKjPfOfbfOGyjkuBN8ow8N-W_kmdfDhttknPA6EQ/exec';
-  const form = document.getElementById('assessmentForm');
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    
-    // Automatically set the current logged-in user name dynamically if needed:
-    // document.getElementById('studentFullname').value = currentUser.fullName;
-
-    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-      .then(res => res.json())
-      .then(data => {
-        if (data.result === 'updated') {
-          alert('Mark updated successfully for student!');
-        } else if (data.result === 'created') {
-          alert('New student record created with mark!');
-        }
-      })
-      .catch(error => console.error('Error!', error.message));
-  });
-
-  </script>
-  <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsmkLpw9oJwmpssnYhVbNfa2g3U3NcfK3OtdfXEKPhCZ95vw-DfGOpPoTxkZb7UZDK6w/exec';
-  const form = document.getElementById('registrationForm');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result === 'success') {
-        // Unlock assessment questions or redirect student
-        alert('Attendance recorded! Unlocking assessment...');
-        // Example: document.getElementById('assessmentSection').style.display = 'block';
-      } else {
-        alert('Error recording attendance: ' + data.error);
-      }
-    })
-    .catch(error => {
-      console.error('Error!', error.message);
-      alert('Failed to connect to Google Sheets.');
-    });
-  });
-</script>
 </body>
 </html>
