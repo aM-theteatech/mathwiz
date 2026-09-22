@@ -344,22 +344,22 @@
           <p class="text-xs text-[#8b949e]">Please fill in your details correctly before starting.</p>
         </div>
 
-        <form id="registrationForm" onsubmit="return false;" class="space-y-4">
+        <form id="attendanceForm" onsubmit="return false;" class="space-y-4">
           <div>
-            <label for="regStudentName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Full Student Name</label>
+            <label for="regStudentName" name="Fullname" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Full Student Name</label>
             <input type="text" id="regStudentName" required placeholder="e.g., Alex Johnson" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
           </div>
 
           <div>
             <label for="regClassName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Class</label>
-            <select id="regClassName" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+            <select id="regClassName" name="class" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
               <option value="">-- Loading Classes from Database... --</option>
             </select>
           </div>
 
           <div>
             <label for="regTeacherName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Mathematics Teacher</label>
-            <select id="regTeacherName" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+            <select id="regTeacherName" name="Teacher" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
               <option value="">-- Loading Teachers from Database... --</option>
             </select>
           </div>
@@ -404,7 +404,7 @@
             <p class="text-sm md:text-base font-medium text-white mb-3">Are the straight lines <span class="math-var">y</span> = 4<span class="math-var">x</span> + 1 and <span class="math-var">y</span> = 4<span class="math-var">x</span> &minus; 9 parallel to each other? (Write: <strong>Yes</strong> or <strong>No</strong>)</p>
             <input type="text" id="q3Ans" required placeholder="Yes / No" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
           </div>
-
+ 
           <button type="button" id="btnSubmitAssessment" class="w-full bg-[#2ea44f] hover:bg-[#3fb950] text-white font-bold p-3.5 rounded-lg text-sm transition-all shadow-lg">
             Submit Assessment Answers
           </button>
@@ -1263,5 +1263,58 @@
       }
     }
   </script>
+
+    <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbw1737_zBfgioblxEp6X4SxvweE2XqKjPfOfbfOGyjkuBN8ow8N-W_kmdfDhttknPA6EQ/exec';
+  const form = document.getElementById('assessmentForm');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    
+    // Automatically set the current logged-in user name dynamically if needed:
+    // document.getElementById('studentFullname').value = currentUser.fullName;
+
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result === 'updated') {
+          alert('Mark updated successfully for student!');
+        } else if (data.result === 'created') {
+          alert('New student record created with mark!');
+        }
+      })
+      .catch(error => console.error('Error!', error.message));
+  });
+
+  </script>
+  <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsmkLpw9oJwmpssnYhVbNfa2g3U3NcfK3OtdfXEKPhCZ95vw-DfGOpPoTxkZb7UZDK6w/exec';
+  const form = document.getElementById('attendanceForm');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.result === 'success') {
+        // Unlock assessment questions or redirect student
+        alert('Attendance recorded! Unlocking assessment...');
+        // Example: document.getElementById('assessmentSection').style.display = 'block';
+      } else {
+        alert('Error recording attendance: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error!', error.message);
+      alert('Failed to connect to Google Sheets.');
+    });
+  });
+</script>
 </body>
 </html>
