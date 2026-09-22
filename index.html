@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Eimie Math's Digital Kit</title>
-    <!-- Tailwind CSS -->
+    <title>Teacher Eimie Math's Digital Kit - Secondary Mathematics Hub</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -35,21 +35,6 @@
                             blue: '#2563eb',
                             teal: '#0d9488'
                         }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'bounce-slow': 'bounce 3s infinite',
-                        'pulse-glow': 'pulseGlow 2s infinite'
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-15px) rotate(3deg)' }
-                        },
-                        pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 15px rgba(37, 99, 235, 0.4)' },
-                            '50%': { boxShadow: '0 0 30px rgba(124, 58, 237, 0.7)' }
-                        }
                     }
                 }
             }
@@ -69,649 +54,1166 @@
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-
-        .gradient-border-purple {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-        }
-
-        .gradient-border-blue {
-            background: linear-gradient(135deg, #3b82f6, #06b6d4);
-        }
-
-        .gradient-border-emerald {
-            background: linear-gradient(135deg, #10b981, #f59e0b);
         }
 
         .card-hover {
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .card-hover:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
+        }
+
+        /* Custom scrollbar for modal content */
+        pre::-webkit-scrollbar, div::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        pre::-webkit-scrollbar-track, div::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        pre::-webkit-scrollbar-thumb, div::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-purple-200 selection:text-purple-900 flex flex-col min-h-screen">
 
-    <!-- Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-18">
+            <div class="flex items-center justify-between h-20">
                 <!-- Brand Logo & Title -->
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 text-xl font-black font-heading">
+                <button onclick="navigateTo('home')" class="flex items-center gap-3 group text-left">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 text-xl font-black font-heading group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-square-root-variable"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-purple-600 block">Digital Learning Hub</span>
-                        <h1 class="text-lg md:text-xl font-bold font-heading text-slate-900 tracking-tight leading-tight">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 block">KSSM Digital Hub</span>
+                        <h1 class="text-lg md:text-xl font-bold font-heading text-slate-900 tracking-tight leading-none">
                             Teacher Eimie Math's Kit
                         </h1>
                     </div>
+                </button>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden md:flex items-center gap-1.5 font-semibold text-sm">
+                    <button onclick="navigateTo('home')" id="nav-btn-home" class="px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition flex items-center gap-2">
+                        <i class="fa-solid fa-house text-slate-500"></i> Main Hub
+                    </button>
+                    <button onclick="navigateTo('form1')" id="nav-btn-form1" class="px-4 py-2.5 rounded-xl text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Form 1
+                    </button>
+                    <button onclick="navigateTo('form2')" id="nav-btn-form2" class="px-4 py-2.5 rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Form 2
+                    </button>
+                    <button onclick="navigateTo('form3')" id="nav-btn-form3" class="px-4 py-2.5 rounded-xl text-slate-700 hover:bg-purple-50 hover:text-purple-700 transition flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-purple-500"></span> Form 3
+                    </button>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center gap-2 font-medium text-sm">
-                    <a href="#form1" class="px-4 py-2 rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition">
-                        <i class="fa-solid fa-shapes text-emerald-500 mr-1.5"></i> Form 1
-                    </a>
-                    <a href="#form2" class="px-4 py-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition">
-                        <i class="fa-solid fa-chart-pie text-blue-500 mr-1.5"></i> Form 2
-                    </a>
-                    <a href="#form3" class="px-4 py-2 rounded-lg text-purple-700 bg-purple-50 font-bold hover:bg-purple-100 transition shadow-2xs">
-                        <i class="fa-solid fa-rocket text-purple-600 mr-1.5"></i> Form 3 (Featured)
-                    </a>
-                    <a href="#quick-tools" class="px-4 py-2 rounded-xl text-slate-600 hover:text-amber-600 hover:bg-amber-50 transition">
-                        <i class="fa-solid fa-calculator text-amber-500 mr-1.5"></i> Tools
-                    </a>
-                </div>
-
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Hamburger Button -->
                 <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
                     <i id="menu-icon" class="fa-solid fa-bars text-lg"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-md px-4 pt-2 pb-4 space-y-2 text-sm font-semibold">
-            <a href="#form1" onclick="toggleMobileMenu()" class="block px-4 py-2.5 rounded-xl text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
-                <i class="fa-solid fa-shapes text-emerald-500 mr-2"></i> Form 1 Mathematics
-            </a>
-            <a href="#form2" onclick="toggleMobileMenu()" class="block px-4 py-2.5 rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-700">
-                <i class="fa-solid fa-chart-pie text-blue-500 mr-2"></i> Form 2 Mathematics
-            </a>
-            <a href="#form3" onclick="toggleMobileMenu()" class="block px-4 py-2.5 rounded-xl text-purple-800 bg-purple-50">
-                <i class="fa-solid fa-rocket text-purple-600 mr-2"></i> Form 3 Mathematics (MathWiz & Slope)
-            </a>
-            <a href="#quick-tools" onclick="toggleMobileMenu()" class="block px-4 py-2.5 rounded-xl text-slate-700 hover:bg-amber-50 hover:text-amber-700">
-                <i class="fa-solid fa-calculator text-amber-500 mr-2"></i> Quick Calculators
-            </a>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-5 space-y-2 text-sm font-semibold">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 flex items-center gap-3">
+                <i class="fa-solid fa-house text-purple-600"></i> Main Hub (Landing Page)
+            </button>
+            <button onclick="navigateTo('form1'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-emerald-800 bg-emerald-50 flex items-center gap-3">
+                <i class="fa-solid fa-shapes text-emerald-600"></i> Form 1 Mathematics (13 Chapters)
+            </button>
+            <button onclick="navigateTo('form2'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-blue-800 bg-blue-50 flex items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-blue-600"></i> Form 2 Mathematics (13 Chapters)
+            </button>
+            <button onclick="navigateTo('form3'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-purple-800 bg-purple-50 flex items-center gap-3">
+                <i class="fa-solid fa-rocket text-purple-600"></i> Form 3 Mathematics (9 Chapters)
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Banner -->
-    <header class="relative overflow-hidden math-bg-pattern text-white py-16 lg:py-24 border-b border-slate-800">
-        <!-- Floating Math Objects Background Effect -->
-        <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden select-none">
-            <div class="absolute top-10 left-10 text-6xl animate-float font-mono">y = mx + c</div>
-            <div class="absolute top-40 right-20 text-7xl animate-float font-mono" style="animation-delay: 1s;">π r²</div>
-            <div class="absolute bottom-10 left-1/3 text-6xl animate-float font-mono" style="animation-delay: 2s;">a² + b² = c²</div>
-            <div class="absolute top-1/2 left-20 text-5xl animate-float font-mono" style="animation-delay: 1.5s;">∑ x/n</div>
-            <div class="absolute bottom-12 right-1/4 text-6xl animate-float font-mono" style="animation-delay: 2.5s;">Ax + By = C</div>
-        </div>
+    <!-- MAIN CONTAINER WITH PAGE VIEWS -->
+    <main class="flex-1">
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-400/30 text-purple-300 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase backdrop-blur-md">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Secondary School Mathematics Hub
-                    </div>
-
-                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-tight text-white">
-                        Welcome to <br>
-                        <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
-                            Teacher Eimie's Kit
-                        </span>
-                    </h1>
-
-                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                        Explore interactive visualizers, step-by-step math simulations, theory modules, and online tools curated for Malaysian Secondary School Mathematics (KSSM Forms 1, 2, and 3).
-                    </p>
-
-                    <!-- Quick Jump Buttons -->
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
-                        <a href="#form3" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-purple-900/50 hover:shadow-purple-700/60 hover:scale-[1.02] transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-rocket text-amber-300"></i> Explore Form 3 MathWiz
-                        </a>
-                        <a href="#search-section" class="px-5 py-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm hover:bg-slate-700 transition flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass text-purple-400"></i> Search Topics
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Teacher Bio Card / Badge -->
-                <div class="lg:col-span-5 flex justify-center">
-                    <div class="w-full max-w-sm glass-card rounded-3xl p-6 shadow-2xl border border-white/20 text-slate-800 relative">
-                        <div class="absolute -top-3 -right-3 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow-md uppercase tracking-wider">
-                            Interactive Math
-                        </div>
-                        <div class="flex items-center gap-4 mb-4 border-b border-slate-200/80 pb-4">
-                            <div class="w-16 h-16 rounded-2xl bg-purple-100 border-2 border-purple-500 flex items-center justify-center text-purple-700 text-2xl font-bold shadow-inner">
-                                👩‍🏫
-                            </div>
-                            <div>
-                                <h3 class="font-bold font-heading text-lg text-slate-900">Teacher Eimie</h3>
-                                <p class="text-xs text-slate-500 font-semibold">Mathematics Educator & Tech Creator</p>
-                                <div class="flex items-center gap-1 text-amber-500 text-xs mt-1">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <span class="text-slate-600 text-[11px] font-medium ml-1">(Form 1 • 2 • 3)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-2.5 text-xs font-medium text-slate-600">
-                            <div class="flex items-center justify-between bg-purple-50/70 p-2.5 rounded-xl text-purple-900">
-                                <span><i class="fa-solid fa-graduation-cap text-purple-600 mr-2"></i>Target Syllabus</span>
-                                <span class="font-bold">KSSM Mathematics</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-emerald-50/70 p-2.5 rounded-xl text-emerald-900">
-                                <span><i class="fa-solid fa-compass-drafting text-emerald-600 mr-2"></i>Interactive Visuals</span>
-                                <span class="font-bold">Slope, Graphs & Formulas</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-blue-50/70 p-2.5 rounded-xl text-blue-900">
-                                <span><i class="fa-solid fa-globe text-blue-600 mr-2"></i>MathWiz Apps</span>
-                                <span class="font-bold">Live GitHub Resources</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </header>
-
-    <!-- Quick Search Section -->
-    <section id="search-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-7 relative z-20">
-        <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6 border border-slate-200">
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="relative w-full md:w-2/3">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="topic-search" onkeyup="filterTopics()" placeholder="Search topics (e.g. Slope, Pythagoras, Indices, Linear Equations)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none text-sm font-medium transition">
-                </div>
-                <div class="flex items-center gap-2 w-full md:w-auto justify-stretch md:justify-end">
-                    <button onclick="filterForm('all')" id="btn-filter-all" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow-xs transition">All Forms</button>
-                    <button onclick="filterForm('1')" id="btn-filter-1" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-emerald-100 hover:text-emerald-800 text-slate-700 font-bold text-xs transition">Form 1</button>
-                    <button onclick="filterForm('2')" id="btn-filter-2" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-800 text-slate-700 font-bold text-xs transition">Form 2</button>
-                    <button onclick="filterForm('3')" id="btn-filter-3" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-purple-100 hover:text-purple-800 text-slate-700 font-bold text-xs transition">Form 3</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 space-y-16">
-
-        <!-- ================= FORM 1 SECTION ================= -->
-        <section id="form1" class="topic-section" data-form="1">
-            <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-emerald-500/30">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold font-heading text-lg shadow-sm">
-                    F1
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold font-heading text-slate-900">Form 1 Mathematics (Tingkatan 1)</h2>
-                    <p class="text-slate-500 text-xs font-medium">Foundational algebra, rational numbers, basic geometry, and ratios.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Module 1 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="rational numbers integers calculations">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 1 & 2</span>
-                            <span class="text-emerald-500 text-lg"><i class="fa-solid fa-hashtag"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Rational Numbers & Integers</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Master positive/negative integers, fractions, decimals, BODMAS order of operations, and prime factors.
-                        </p>
-                    </div>
-                    <button onclick="openIntegerTool()" class="w-full py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calculator"></i> Integer Interactive Tool
-                    </button>
-                </div>
-
-                <!-- Module 2 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="algebraic expressions linear equations">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 5 & 6</span>
-                            <span class="text-emerald-500 text-lg"><i class="fa-solid fa-superscript"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Algebraic Expressions & Linear Equations</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Understanding variables, algebraic operations, solving one-variable linear equations step-by-step.
-                        </p>
-                    </div>
-                    <button onclick="openAlgebraTool()" class="w-full py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-vial"></i> Linear Equation Solver
-                    </button>
-                </div>
-
-                <!-- Module 3 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="ratios rates proportions geometry angles">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 4 & 8</span>
-                            <span class="text-emerald-500 text-lg"><i class="fa-solid fa-draw-polygon"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Ratios & Basic Geometry</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Explore ratios, rates, proportions, complementary/supplementary angles, and parallel line transversals.
-                        </p>
-                    </div>
-                    <button onclick="openRatioTool()" class="w-full py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-scale-balanced"></i> Ratio & Angle Explorer
-                    </button>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= FORM 2 SECTION ================= -->
-        <section id="form2" class="topic-section" data-form="2">
-            <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-blue-500/30">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold font-heading text-lg shadow-sm">
-                    F2
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold font-heading text-slate-900">Form 2 Mathematics (Tingkatan 2)</h2>
-                    <p class="text-slate-500 text-xs font-medium">Patterns, factorisation, circles, Pythagoras Theorem, and transformations.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Module 1 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="patterns sequences algebraic formulae factorisation">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 1 & 2</span>
-                            <span class="text-blue-500 text-lg"><i class="fa-solid fa-cubes"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Patterns & Factorisation</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Fibonacci numbers, algebraic expansion, quadratic factorisation, and changing the subject of formula.
-                        </p>
-                    </div>
-                    <button onclick="openSequenceTool()" class="w-full py-2.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-list-ol"></i> Sequence Generator
-                    </button>
-                </div>
-
-                <!-- Module 2 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="pythagoras theorem right angled triangles hypotenuse">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 13</span>
-                            <span class="text-blue-500 text-lg"><i class="fa-solid fa-triangle-exclamation"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Pythagoras Theorem</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Calculate hypotenuse and unknown sides of right-angled triangles using <span class="font-mono text-blue-700 font-bold">a² + b² = c²</span>.
-                        </p>
-                    </div>
-                    <button onclick="openPythagorasTool()" class="w-full py-2.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-ruler-combined"></i> Pythagoras Calculator
-                    </button>
-                </div>
-
-                <!-- Module 3 -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="circles radius circumference area arc length">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 5</span>
-                            <span class="text-blue-500 text-lg"><i class="fa-solid fa-circle-notch"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Circles & Arc Length</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Radius, diameter, chord, sector area, and circumference formulas with interactive radius visualizer.
-                        </p>
-                    </div>
-                    <button onclick="openCircleTool()" class="w-full py-2.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-compass"></i> Circle Formulas Tool
-                    </button>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= FORM 3 SECTION (FEATURED REQUIREMENTS) ================= -->
-        <section id="form3" class="topic-section relative" data-form="3">
+        <!-- ================================================================= -->
+        <!-- VIEW 0: MAIN LANDING PAGE (HOME HUB)                              -->
+        <!-- ================================================================= -->
+        <div id="view-home" class="page-view">
             
-            <!-- Section Header with Glow Effect -->
-            <div class="flex items-center justify-between mb-6 pb-3 border-b-2 border-purple-500/40">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-600 text-white flex items-center justify-center font-black font-heading text-xl shadow-lg shadow-purple-200">
-                        F3
-                    </div>
-                    <div>
-                        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 uppercase tracking-widest bg-purple-100 px-2.5 py-0.5 rounded-full mb-1">
-                            <i class="fa-solid fa-star text-amber-500"></i> Primary Interactive Focus
+            <!-- Hero Banner -->
+            <header class="relative overflow-hidden math-bg-pattern text-white py-14 lg:py-20 border-b border-slate-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-8 space-y-5 text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-400/30 text-purple-300 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Complete KSSM Secondary Mathematics (Forms 1 - 3)
+                            </div>
+                            <h1 class="text-3xl sm:text-5xl font-black font-heading tracking-tight text-white leading-tight">
+                                Teacher Eimie Math's <br>
+                                <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+                                    Digital Learning Kit
+                                </span>
+                            </h1>
+                            <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                                Explore interactive tools, formula calculators, and step-by-step solvers for all 35 chapters across Form 1, Form 2, and Form 3.
+                            </p>
                         </div>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900">
-                            Form 3 Mathematics (Tingkatan 3)
-                        </h2>
+                        <div class="lg:col-span-4 flex justify-center">
+                            <div class="w-full max-w-sm glass-card rounded-3xl p-5 text-slate-800 border border-white/30 shadow-2xl">
+                                <div class="flex items-center gap-3 border-b border-slate-200/80 pb-3">
+                                    <div class="w-12 h-12 rounded-2xl bg-purple-100 border border-purple-300 flex items-center justify-center text-2xl">
+                                        👩‍🏫
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold font-heading text-base text-slate-900">Teacher Eimie</h3>
+                                        <p class="text-xs text-slate-500 font-semibold">Secondary Mathematics Educator</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 space-y-2 text-xs font-semibold text-slate-600">
+                                    <div class="flex justify-between items-center bg-slate-100/80 p-2 rounded-xl">
+                                        <span><i class="fa-solid fa-graduation-cap text-purple-600 mr-2"></i>Syllabus:</span>
+                                        <span class="text-purple-700 font-bold">KSSM Forms 1-3 (35 Ch)</span>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-slate-100/80 p-2 rounded-xl">
+                                        <span><i class="fa-solid fa-vial-circle-check text-blue-600 mr-2"></i>Interactive Tools:</span>
+                                        <span class="text-blue-700 font-bold">35 Solvers Ready</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <!-- Special Featured Banner Container -->
-            <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-indigo-800/80 mb-8 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-9xl font-mono text-purple-400">
-                    y=mx+c
-                </div>
-
-                <div class="max-w-3xl space-y-4 relative z-10">
-                    <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                        <i class="fa-solid fa-link"></i> External Learning Web Applications
-                    </div>
-                    
-                    <h3 class="text-2xl sm:text-4xl font-black font-heading tracking-tight leading-tight text-white">
-                        MathWiz Portal & Interactive Theory of Slope
-                    </h3>
-                    
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        Access Teacher Eimie's signature web applications hosted on GitHub Pages for mastering Form 3 straight line coordinate geometry, gradients, equation representations, and interactive practice.
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-bold font-heading text-slate-900">Select a Class Portal</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm font-medium mt-1">
+                        Choose a form below to access interactive tools and solvers for every chapter.
                     </p>
-
-                    <!-- Core Requested External Links Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                        
-                        <!-- Button 1: Main MathWiz Link -->
-                        <a href="https://am-theteatech.github.io/mathwiz/lociflashcard.html" target="_blank" rel="noopener noreferrer" 
-                           class="group relative bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 p-5 rounded-2xl border border-purple-400/40 shadow-xl card-hover flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[11px] font-extrabold text-purple-200 uppercase tracking-wider bg-white/10 px-2.5 py-1 rounded-md">Main Portal</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-purple-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition"></i>
-                                </div>
-                                <h4 class="text-lg font-bold font-heading text-white flex items-center gap-2">
-                                    🚀 MathWiz Main App
-                                </h4>
-                                <p class="text-xs text-purple-100/80 mt-1 leading-relaxed">
-                                    Comprehensive interactive suite for Form 3 Mathematics tutorials, drills, and visual learning tools.
-                                </p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-purple-400/30 flex items-center justify-between text-xs font-bold text-amber-300">
-                                <span>Launch App</span>
-                                <span class="font-mono text-[10px] text-purple-200 opacity-80">am-theteatech.github.io/mathwiz/</span>
-                            </div>
-                        </a>
-
-                        <!-- Button 2: Theory of Slope Link -->
-                        <a href="https://am-theteatech.github.io/mathwiz/theoryofslope.html" target="_blank" rel="noopener noreferrer" 
-                           class="group relative bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 p-5 rounded-2xl border border-teal-400/40 shadow-xl card-hover flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[11px] font-extrabold text-teal-100 uppercase tracking-wider bg-white/10 px-2.5 py-1 rounded-md">Special Visualizer</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-teal-200 group-hover:translate-x-1 group-hover:-translate-y-1 transition"></i>
-                                </div>
-                                <h4 class="text-lg font-bold font-heading text-white flex items-center gap-2">
-                                    📐 Theory of Slope App
-                                </h4>
-                                <p class="text-xs text-teal-100/90 mt-1 leading-relaxed">
-                                    Interactive simulation for understanding slope gradient $m = \frac{\text{rise}}{\text{run}}$, straight line forms, and coordinate geometry.
-                                </p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-teal-400/30 flex items-center justify-between text-xs font-bold text-emerald-200">
-                                <span>Open Simulation</span>
-                                <span class="font-mono text-[10px] text-teal-100 opacity-80">.../theoryofslope.html</span>
-                            </div>
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form 3 Topics Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Topic 1: Indices & Standard Form -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="indices laws standard form scientific notation">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 1 & 2</span>
-                            <span class="text-purple-600 text-lg"><i class="fa-solid fa-square-xmark"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Indices & Scientific Notation</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Index laws (<span class="font-mono text-purple-700 font-bold">aᵐ × aⁿ = aᵐ⁺ⁿ</span>), fractional indices, and standard form (<span class="font-mono text-purple-700 font-bold">A × 10ⁿ</span>).
-                        </p>
-                    </div>
-                    <button onclick="openIndicesTool()" class="w-full py-2.5 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Index Laws Quick Test
-                    </button>
                 </div>
 
-                <!-- Topic 2: Straight Lines (General, Gradient, Intercept) -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="straight line gradient slope y=mx+c general form intercept form">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 9</span>
-                            <span class="text-purple-600 text-lg"><i class="fa-solid fa-chart-line"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Straight Line Equations</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Convert between <b>General Form</b> (<span class="font-mono">ax+by=c</span>), <b>Gradient-Intercept</b> (<span class="font-mono">y=mx+c</span>), and <b>Intercept Form</b> (<span class="font-mono">x/a+y/b=1</span>).
-                        </p>
-                    </div>
-                    <a href="https://am-theteatech.github.io/mathwiz/theoryofslope.html" target="_blank" class="w-full py-2.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 font-bold text-xs transition flex items-center justify-center gap-2 shadow-xs">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Theory of Slope
-                    </a>
-                </div>
-
-                <!-- Topic 3: Trigonometric Ratios -->
-                <div class="topic-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm card-hover flex flex-col justify-between" data-title="trigonometry sine cosine tangent sin cos tan pythagoras">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Chapter 5</span>
-                            <span class="text-purple-600 text-lg"><i class="fa-solid fa-wave-square"></i></span>
-                        </div>
-                        <h3 class="font-bold font-heading text-slate-900 text-lg mb-2">Trigonometric Ratios</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Master <span class="font-bold text-purple-800">SOH CAH TOA</span> for sine, cosine, and tangent in right-angled triangles.
-                        </p>
-                    </div>
-                    <button onclick="openTrigTool()" class="w-full py-2.5 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calculator"></i> SOH CAH TOA Helper
-                    </button>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Quick Interactive Utility Tools Section -->
-        <section id="quick-tools" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md">
-            <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
-                <div>
-                    <span class="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2.5 py-0.5 rounded-full">Interactive Kit</span>
-                    <h2 class="text-2xl font-bold font-heading text-slate-900 mt-1">Quick Classroom Math Assistant</h2>
-                </div>
-                <div class="text-amber-500 text-2xl">
-                    <i class="fa-solid fa-toolbox"></i>
-                </div>
-            </div>
-
-            <!-- Tool Tabs / Display -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left Control Column -->
-                <div class="lg:col-span-5 space-y-3">
-                    <p class="text-xs text-slate-500 font-medium">Click a quick utility to test formulas right inside Teacher Eimie's page:</p>
-
-                    <button onclick="switchQuickTool('slope')" id="tool-btn-slope" class="w-full p-3.5 rounded-xl border-2 border-purple-600 bg-purple-50 text-purple-900 font-bold text-xs text-left flex items-center justify-between transition">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-chart-line text-purple-600 text-sm"></i> Gradient (m) Quick Calculator</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-purple-500"></i>
-                    </button>
-
-                    <button onclick="switchQuickTool('pythagoras')" id="tool-btn-pythagoras" class="w-full p-3.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs text-left flex items-center justify-between hover:border-slate-300 transition">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-blue-600 text-sm"></i> Pythagoras Hypotenuse Finder</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
-                    </button>
-
-                    <button onclick="switchQuickTool('formula')" id="tool-btn-formula" class="w-full p-3.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs text-left flex items-center justify-between hover:border-slate-300 transition">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-emerald-600 text-sm"></i> Secondary School Formula Cheat Sheet</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
-                    </button>
-                </div>
-
-                <!-- Right Display Area -->
-                <div class="lg:col-span-7 bg-slate-50 p-5 rounded-2xl border border-slate-200 min-h-[220px] flex flex-col justify-center">
+                <!-- 3 Class Portal Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     
-                    <!-- Tool 1: Slope Quick Calculator -->
-                    <div id="tool-slope" class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-bold text-slate-900 text-sm">Gradient Formula: <span class="font-mono text-purple-700">m = (y₂ - y₁) / (x₂ - x₁)</span></h4>
-                            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">Form 3 Topic</span>
+                    <!-- Form 1 Card -->
+                    <div class="bg-white rounded-3xl p-6 border-2 border-emerald-100 shadow-md hover:shadow-xl card-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black font-heading text-xl shadow-md shadow-emerald-200 mb-4">
+                                F1
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-md">13 Chapters</span>
+                            <h3 class="text-xl font-bold font-heading text-slate-900 mt-2 mb-2">Form 1 Mathematics</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Foundation KSSM topics: Rational Numbers, Linear Equations, Inequalities, Angles, Polygons, Area, Sets, Data, and Pythagoras.
+                            </p>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">x₁</label>
-                                <input type="number" id="slope-x1" value="0" oninput="calcSlope()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
-                            </div>
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">y₁</label>
-                                <input type="number" id="slope-y1" value="2" oninput="calcSlope()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
-                            </div>
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">x₂</label>
-                                <input type="number" id="slope-x2" value="4" oninput="calcSlope()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
-                            </div>
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">y₂</label>
-                                <input type="number" id="slope-y2" value="0" oninput="calcSlope()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
-                            </div>
-                        </div>
-                        <div class="p-3 bg-purple-100/70 border border-purple-200 rounded-xl text-center">
-                            <div class="text-xs text-purple-800 font-semibold">Calculated Gradient (m):</div>
-                            <div id="slope-result" class="text-xl font-black font-mono text-purple-900 mt-1">-0.50 (-1/2)</div>
-                        </div>
+                        <button onclick="navigateTo('form1')" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            Open Form 1 Class (13 Tools) <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     </div>
 
-                    <!-- Tool 2: Pythagoras Tool -->
-                    <div id="tool-pythagoras" class="hidden space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-bold text-slate-900 text-sm">Pythagoras Theorem: <span class="font-mono text-blue-700">c = √(a² + b²)</span></h4>
-                            <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Form 2 Topic</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-xs">
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">Side a</label>
-                                <input type="number" id="pyth-a" value="3" oninput="calcPythagoras()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
+                    <!-- Form 2 Card -->
+                    <div class="bg-white rounded-3xl p-6 border-2 border-blue-100 shadow-md hover:shadow-xl card-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black font-heading text-xl shadow-md shadow-blue-200 mb-4">
+                                F2
                             </div>
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">Side b</label>
-                                <input type="number" id="pyth-b" value="4" oninput="calcPythagoras()" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-center">
-                            </div>
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-md">13 Chapters</span>
+                            <h3 class="text-xl font-bold font-heading text-slate-900 mt-2 mb-2">Form 2 Mathematics</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Intermediate KSSM topics: Sequences, Factorisation, Circles, 3D Solids, Coordinates, Speed, Gradient, Transformations, and Probability.
+                            </p>
                         </div>
-                        <div class="p-3 bg-blue-100/70 border border-blue-200 rounded-xl text-center">
-                            <div class="text-xs text-blue-800 font-semibold">Hypotenuse (c):</div>
-                            <div id="pyth-result" class="text-xl font-black font-mono text-blue-900 mt-1">5.00</div>
-                        </div>
+                        <button onclick="navigateTo('form2')" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            Open Form 2 Class (13 Tools) <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     </div>
 
-                    <!-- Tool 3: Formula Sheet -->
-                    <div id="tool-formula" class="hidden space-y-3">
-                        <h4 class="font-bold text-slate-900 text-sm border-b border-slate-200 pb-2">Essential Formulas Summary</h4>
-                        <div class="space-y-2 text-xs font-mono">
-                            <div class="p-2 bg-white rounded-lg border border-slate-200 flex justify-between">
-                                <span class="text-slate-600">Slope-Intercept Form:</span>
-                                <span class="font-bold text-purple-700">y = mx + c</span>
+                    <!-- Form 3 Card -->
+                    <div class="bg-white rounded-3xl p-6 border-2 border-purple-100 shadow-md hover:shadow-xl card-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-black font-heading text-xl shadow-md shadow-purple-200 mb-4">
+                                F3
                             </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200 flex justify-between">
-                                <span class="text-slate-600">Intercept Form:</span>
-                                <span class="font-bold text-amber-700">x/a + y/b = 1</span>
-                            </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200 flex justify-between">
-                                <span class="text-slate-600">General Line Form:</span>
-                                <span class="font-bold text-blue-700">Ax + By = C</span>
-                            </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200 flex justify-between">
-                                <span class="text-slate-600">Circle Circumference:</span>
-                                <span class="font-bold text-emerald-700">2 × π × r</span>
-                            </div>
+                            <span class="text-xs font-bold text-purple-600 uppercase tracking-widest bg-purple-50 px-2.5 py-1 rounded-md">9 Chapters</span>
+                            <h3 class="text-xl font-bold font-heading text-slate-900 mt-2 mb-2">Form 3 Mathematics</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Advanced KSSM topics: Indices, Standard Form, Consumer Math, Scale Drawings, Trigonometry, Circle Tangents, Loci, and Straight Lines.
+                            </p>
                         </div>
+                        <button onclick="navigateTo('form3')" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                            Open Form 3 Class (9 Tools) <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     </div>
 
                 </div>
+
+                <!-- Syllabus Comparison Table Overview -->
+                <div class="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <span class="text-xs font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-3 py-1 rounded-md">KSSM Syllabus Comparison</span>
+                            <h3 class="text-xl font-bold font-heading text-slate-900 mt-1">Complete Chapter Breakdown & Alignment</h3>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl">35 Total Chapters</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                        <!-- Form 1 List -->
+                        <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100 space-y-2">
+                            <h4 class="font-bold text-emerald-800 text-sm border-b border-emerald-200 pb-2 flex items-center justify-between">
+                                <span>Form 1 (Tingkatan 1)</span>
+                                <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full">13 Ch</span>
+                            </h4>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-700 font-medium">
+                                <li>Rational Numbers</li>
+                                <li>Factors and Multiples</li>
+                                <li>Squares & Cube Roots</li>
+                                <li>Ratios, Rates & Proportions</li>
+                                <li>Algebraic Expressions</li>
+                                <li>Linear Equations</li>
+                                <li>Linear Inequalities</li>
+                                <li>Lines and Angles</li>
+                                <li>Basic Polygons</li>
+                                <li>Perimeter and Area</li>
+                                <li>Introduction to Set</li>
+                                <li>Data Handling</li>
+                                <li>Pythagoras' Theorem</li>
+                            </ol>
+                        </div>
+
+                        <!-- Form 2 List -->
+                        <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-2">
+                            <h4 class="font-bold text-blue-800 text-sm border-b border-blue-200 pb-2 flex items-center justify-between">
+                                <span>Form 2 (Tingkatan 2)</span>
+                                <span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full">13 Ch</span>
+                            </h4>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-700 font-medium">
+                                <li>Patterns and Sequences</li>
+                                <li>Factorisation & Fractions</li>
+                                <li>Algebraic Formulae</li>
+                                <li>Polygons</li>
+                                <li>Circles</li>
+                                <li>3D Geometric Shapes</li>
+                                <li>Coordinates</li>
+                                <li>Graphs of Functions</li>
+                                <li>Speed and Acceleration</li>
+                                <li>Gradient of a Line</li>
+                                <li>Isometric Transformations</li>
+                                <li>Measures of Central Tendency</li>
+                                <li>Simple Probability</li>
+                            </ol>
+                        </div>
+
+                        <!-- Form 3 List -->
+                        <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 space-y-2">
+                            <h4 class="font-bold text-purple-800 text-sm border-b border-purple-200 pb-2 flex items-center justify-between">
+                                <span>Form 3 (Tingkatan 3)</span>
+                                <span class="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded-full">9 Ch</span>
+                            </h4>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-700 font-medium">
+                                <li>Indices</li>
+                                <li>Standard Form</li>
+                                <li>Consumer Mathematics</li>
+                                <li>Scale Drawings</li>
+                                <li>Trigonometric Ratios</li>
+                                <li>Angles in Circles</li>
+                                <li>Plans and Elevations</li>
+                                <li>Loci in Two Dimensions</li>
+                                <li>Straight Lines</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: FORM 1 CLASS PAGE                                        -->
+        <!-- ================================================================= -->
+        <div id="view-form1" class="page-view hidden">
+            
+            <!-- Class Header Banner -->
+            <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white py-12 border-b border-emerald-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                                <i class="fa-solid fa-shapes"></i> KSSM Form 1 Portal • 13 Syllabus Chapters
+                            </div>
+                            <h1 class="text-3xl sm:text-4xl font-black font-heading text-white">Form 1 Mathematics</h1>
+                            <p class="text-slate-300 text-xs sm:text-sm max-w-xl mt-1">
+                                Complete teaching kit for Form 1. Click any chapter tool to simulate calculations.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Landing Page
+                        </button>
+                    </div>
+                </div>
             </div>
-        </section>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+                <!-- Interactive Suite Grid for ALL 13 Chapters -->
+                <section>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-0.5 rounded-md">Interactive Suite</span>
+                            <h2 class="text-2xl font-bold font-heading text-slate-900 mt-1">Form 1 Classroom Tools (Chapters 1 - 13)</h2>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">13 interactive tools available below:</p>
+                    </div>
+
+                    <!-- Grid of 13 Tools -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        
+                        <!-- Ch 1 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 1</span>
+                                    <i class="fa-solid fa-calculator text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Signed Integers & BODMAS</h3>
+                                <p class="text-xs text-slate-600 mb-4">Evaluate signed operations (+/-) and order of operations.</p>
+                            </div>
+                            <button onclick="openForm1IntegerTool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 2 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 2</span>
+                                    <i class="fa-solid fa-list-check text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">HCF & LCM Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Find Highest Common Factor and Lowest Common Multiple.</p>
+                            </div>
+                            <button onclick="openF1Ch2Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 3 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 3</span>
+                                    <i class="fa-solid fa-superscript text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Squares & Cube Roots</h3>
+                                <p class="text-xs text-slate-600 mb-4">Evaluate $x^2, \sqrt{x}, x^3, \sqrt[3]{x}$ instantly.</p>
+                            </div>
+                            <button onclick="openF1Ch3Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 4 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 4</span>
+                                    <i class="fa-solid fa-scale-balanced text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Ratio & Proportion Explorer</h3>
+                                <p class="text-xs text-slate-600 mb-4">Simplify 3-part ratios ($a:b:c$) and equivalent rates.</p>
+                            </div>
+                            <button onclick="openForm1RatioTool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 5 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 5</span>
+                                    <i class="fa-solid fa-font text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Algebraic Terms Analyzer</h3>
+                                <p class="text-xs text-slate-600 mb-4">Identify variables, coefficients, and simplify terms.</p>
+                            </div>
+                            <button onclick="openF1Ch5Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 6 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 6</span>
+                                    <i class="fa-solid fa-equals text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Linear Equation Solver</h3>
+                                <p class="text-xs text-slate-600 mb-4">Solve single variable linear equations ($ax + b = c$).</p>
+                            </div>
+                            <button onclick="openForm1AlgebraTool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 7 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 7</span>
+                                    <i class="fa-solid fa-[#0d9488] fa-greater-than-equal text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Linear Inequalities Tool</h3>
+                                <p class="text-xs text-slate-600 mb-4">Solve $ax > b$ and visualize inequalities on number line.</p>
+                            </div>
+                            <button onclick="openF1Ch7Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 8 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 8</span>
+                                    <i class="fa-solid fa-ruler-combined text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Lines & Angles Inspector</h3>
+                                <p class="text-xs text-slate-600 mb-4">Complementary ($90^\circ$), Supplementary ($180^\circ$) angles.</p>
+                            </div>
+                            <button onclick="openF1Ch8Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 9 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 9</span>
+                                    <i class="fa-solid fa-shapes text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Polygon Angle Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Calculate sum of interior angles $(n-2)\times 180^\circ$.</p>
+                            </div>
+                            <button onclick="openF1Ch9Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 10 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 10</span>
+                                    <i class="fa-solid fa-draw-polygon text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Perimeter & Area Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Areas of triangles, parallelograms, and trapeziums.</p>
+                            </div>
+                            <button onclick="openF1Ch10Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 11 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 11</span>
+                                    <i class="fa-solid fa-circle-nodes text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Set Operations & Venn Diagram</h3>
+                                <p class="text-xs text-slate-600 mb-4">Explore sets, union ($\cup$), intersection ($\cap$), complement.</p>
+                            </div>
+                            <button onclick="openF1Ch11Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 12 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 12</span>
+                                    <i class="fa-solid fa-chart-column text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Data Stats Visualizer</h3>
+                                <p class="text-xs text-slate-600 mb-4">Bar chart generator and mean/mode/median finder.</p>
+                            </div>
+                            <button onclick="openF1Ch12Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 13 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Chapter 13</span>
+                                    <i class="fa-solid fa-play text-emerald-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Pythagoras' Theorem Solver</h3>
+                                <p class="text-xs text-slate-600 mb-4">Compute hypotenuse $c = \sqrt{a^2+b^2}$ for right triangles.</p>
+                            </div>
+                            <button onclick="openF1Ch13Tool()" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- SEE MORE CODE INSPECTOR BUTTON -->
+                    <div class="mt-6 bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-code"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Developer & Teacher Code Inspector</h4>
+                                <p class="text-xs text-slate-500">View the HTML, CSS, and JavaScript source code for Form 1 tools.</p>
+                            </div>
+                        </div>
+                        <button onclick="showCodeViewer('Form 1 Mathematics Tools Code', form1CodeSnippet)" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-code text-emerald-400"></i> See More / View HTML Code
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: FORM 2 CLASS PAGE                                        -->
+        <!-- ================================================================= -->
+        <div id="view-form2" class="page-view hidden">
+            
+            <!-- Class Header Banner -->
+            <div class="bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 text-white py-12 border-b border-blue-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <div class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                                <i class="fa-solid fa-chart-pie"></i> KSSM Form 2 Portal • 13 Syllabus Chapters
+                            </div>
+                            <h1 class="text-3xl sm:text-4xl font-black font-heading text-white">Form 2 Mathematics</h1>
+                            <p class="text-slate-300 text-xs sm:text-sm max-w-xl mt-1">
+                                Complete teaching kit for Form 2. Click any chapter tool to simulate calculations.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Landing Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+                <!-- Interactive Suite Grid for ALL 13 Chapters -->
+                <section>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                        <div>
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-0.5 rounded-md">Interactive Suite</span>
+                            <h2 class="text-2xl font-bold font-heading text-slate-900 mt-1">Form 2 Classroom Tools (Chapters 1 - 13)</h2>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">13 interactive tools available below:</p>
+                    </div>
+
+                    <!-- Grid of 13 Tools -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        
+                        <!-- Ch 1 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 1</span>
+                                    <i class="fa-solid fa-list-ol text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Sequence & Fibonacci Generator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Generate nth-terms and Fibonacci number sequences.</p>
+                            </div>
+                            <button onclick="openForm2SequenceTool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 2 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 2</span>
+                                    <i class="fa-solid fa-layer-group text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Factorisation Solver</h3>
+                                <p class="text-xs text-slate-600 mb-4">Factorise $x^2 + bx + c$ and algebraic fractions.</p>
+                            </div>
+                            <button onclick="openF2Ch2Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 3 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 3</span>
+                                    <i class="fa-solid fa-shuffle text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Subject of Formula Change</h3>
+                                <p class="text-xs text-slate-600 mb-4">Rearrange algebraic formulas step-by-step.</p>
+                            </div>
+                            <button onclick="openF2Ch3Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 4 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 4</span>
+                                    <i class="fa-solid fa-draw-polygon text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Regular Polygon Angles</h3>
+                                <p class="text-xs text-slate-600 mb-4">Calculate interior angle $(n-2)\times 180/n$ and exterior angle $360/n$.</p>
+                            </div>
+                            <button onclick="openF2Ch4Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 5 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 5</span>
+                                    <i class="fa-solid fa-circle text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Circle Area & Arc Tool</h3>
+                                <p class="text-xs text-slate-600 mb-4">Area ($\pi r^2$), circumference, arc length, and sector area.</p>
+                            </div>
+                            <button onclick="openForm2CircleTool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 6 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 6</span>
+                                    <i class="fa-solid fa-cube text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">3D Shapes Volume & Area</h3>
+                                <p class="text-xs text-slate-600 mb-4">Surface area and volume for cylinders, cones, and spheres.</p>
+                            </div>
+                            <button onclick="openF2Ch6Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 7 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 7</span>
+                                    <i class="fa-solid fa-location-crosshairs text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Distance & Midpoint Solver</h3>
+                                <p class="text-xs text-slate-600 mb-4">Find distance $\sqrt{\Delta x^2 + \Delta y^2}$ and midpoint $((x_1+x_2)/2, (y_1+y_2)/2)$.</p>
+                            </div>
+                            <button onclick="openF2Ch7Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 8 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 8</span>
+                                    <i class="fa-solid fa-chart-line text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Graphs of Functions Plotter</h3>
+                                <p class="text-xs text-slate-600 mb-4">Plot linear ($y=mx+c$) and quadratic ($y=ax^2+c$) values.</p>
+                            </div>
+                            <button onclick="openF2Ch8Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 9 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 9</span>
+                                    <i class="fa-solid fa-gauge-high text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Speed & Acceleration Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Calculate Speed ($d/t$) and Acceleration ($(v-u)/t$).</p>
+                            </div>
+                            <button onclick="openF2Ch9Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 10 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 10</span>
+                                    <i class="fa-solid fa-arrow-trend-up text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Gradient of a Line</h3>
+                                <p class="text-xs text-slate-600 mb-4">Compute slope $m = (y_2 - y_1) / (x_2 - x_1)$.</p>
+                            </div>
+                            <button onclick="openF2Ch10Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 11 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 11</span>
+                                    <i class="fa-solid fa-repeat text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Isometric Transformation</h3>
+                                <p class="text-xs text-slate-600 mb-4">Simulate Translation, Reflection, and Rotation rules.</p>
+                            </div>
+                            <button onclick="openF2Ch11Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 12 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 12</span>
+                                    <i class="fa-solid fa-chart-pie text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Mean, Median & Mode Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Compute central tendency metrics from raw data.</p>
+                            </div>
+                            <button onclick="openF2Ch12Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 13 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Chapter 13</span>
+                                    <i class="fa-solid fa-dice text-blue-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Simple Probability Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Evaluate $P(A) = n(A) / n(S)$ and complementary events.</p>
+                            </div>
+                            <button onclick="openF2Ch13Tool()" class="w-full py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- SEE MORE CODE INSPECTOR BUTTON -->
+                    <div class="mt-6 bg-blue-50/80 border border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-code"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Developer & Teacher Code Inspector</h4>
+                                <p class="text-xs text-slate-500">View the HTML, CSS, and JavaScript source code for Form 2 tools.</p>
+                            </div>
+                        </div>
+                        <button onclick="showCodeViewer('Form 2 Mathematics Tools Code', form2CodeSnippet)" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-code text-blue-400"></i> See More / View HTML Code
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: FORM 3 CLASS PAGE                                        -->
+        <!-- ================================================================= -->
+        <div id="view-form3" class="page-view hidden">
+            
+            <!-- Class Header Banner -->
+            <div class="bg-gradient-to-r from-purple-950 via-indigo-950 to-slate-900 text-white py-12 border-b border-purple-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <div class="inline-flex items-center gap-2 bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                                <i class="fa-solid fa-rocket"></i> KSSM Form 3 Portal • 9 Syllabus Chapters
+                            </div>
+                            <h1 class="text-3xl sm:text-4xl font-black font-heading text-white">Form 3 Mathematics</h1>
+                            <p class="text-slate-300 text-xs sm:text-sm max-w-xl mt-1">
+                                Complete teaching kit for Form 3. Click any chapter tool to simulate calculations.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Landing Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+                <!-- External Web Apps Links -->
+                <section class="bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-purple-500/30">
+                    <div class="max-w-2xl mb-6">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-300 bg-amber-400/20 border border-amber-400/30 px-3 py-1 rounded-full">
+                            Featured Web Apps
+                        </span>
+                        <h2 class="text-2xl font-bold font-heading text-white mt-2">External Web Applications</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                            Access live interactive web applications designed for Form 3 Mathematics tutorials and slope simulations.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Direct Link 1: MathWiz App Portal -->
+                        <a href="https://am-theteatech.github.io/mathwiz/" target="_blank" rel="noopener noreferrer" class="group bg-white/10 hover:bg-white/20 border border-white/20 p-5 rounded-2xl transition flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xl text-white shadow-md">
+                                    <i class="fa-solid fa-rocket"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base group-hover:text-amber-300 transition">MathWiz Main Portal</h3>
+                                    <p class="text-xs text-slate-300">Interactive drills, quizzes & learning modules.</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-amber-300 text-lg group-hover:scale-110 transition"></i>
+                        </a>
+
+                        <!-- Direct Link 2: Theory of Slope App -->
+                        <a href="https://am-theteatech.github.io/mathwiz/theoryofslope.html" target="_blank" rel="noopener noreferrer" class="group bg-white/10 hover:bg-white/20 border border-white/20 p-5 rounded-2xl transition flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-500 flex items-center justify-center text-xl text-white shadow-md">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base group-hover:text-emerald-300 transition">Theory of Slope App</h3>
+                                    <p class="text-xs text-slate-300">Visual gradient & coordinate geometry solver.</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-emerald-300 text-lg group-hover:scale-110 transition"></i>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Interactive Suite Grid for ALL 9 Chapters -->
+                <section>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                        <div>
+                            <span class="text-xs font-bold text-purple-600 uppercase tracking-widest bg-purple-50 px-2.5 py-0.5 rounded-md">Interactive Suite</span>
+                            <h2 class="text-2xl font-bold font-heading text-slate-900 mt-1">Form 3 Classroom Tools (Chapters 1 - 9)</h2>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">9 interactive tools available below:</p>
+                    </div>
+
+                    <!-- Grid of 9 Tools -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        
+                        <!-- Ch 1 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 1</span>
+                                    <i class="fa-solid fa-bolt text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Laws of Indices Evaluator</h3>
+                                <p class="text-xs text-slate-600 mb-4">$a^m \times a^n = a^{m+n}$, division, and fractional index calculator.</p>
+                            </div>
+                            <button onclick="openForm3IndicesTool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 2 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 2</span>
+                                    <i class="fa-solid fa-hashtag text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Standard Form Converter</h3>
+                                <p class="text-xs text-slate-600 mb-4">Convert numbers to scientific notation $A \times 10^n$.</p>
+                            </div>
+                            <button onclick="openF3Ch2Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 3 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 3</span>
+                                    <i class="fa-solid fa-piggy-bank text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Consumer Math Interest Calculator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Compute Simple Interest ($I=Prt$) & Compound Interest ($A=P(1+r/n)^{nt}$).</p>
+                            </div>
+                            <button onclick="openF3Ch3Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 4 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 4</span>
+                                    <i class="fa-solid fa-up-right-and-down-left-from-center text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Scale Drawings Scale Ratio</h3>
+                                <p class="text-xs text-slate-600 mb-4">Calculate scale ratios ($1 : n$) and actual measurements.</p>
+                            </div>
+                            <button onclick="openF3Ch4Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 5 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 5</span>
+                                    <i class="fa-solid fa-calculator text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Trig Ratio Solver (SOH-CAH-TOA)</h3>
+                                <p class="text-xs text-slate-600 mb-4">Compute Sine, Cosine, and Tangent for right triangles.</p>
+                            </div>
+                            <button onclick="openForm3TrigTool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 6 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 6</span>
+                                    <i class="fa-solid fa-bullseye text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Angles in Circles Inspector</h3>
+                                <p class="text-xs text-slate-600 mb-4">Subtended angles ($2\theta$), cyclic quadrilaterals, tangents.</p>
+                            </div>
+                            <button onclick="openF3Ch6Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 7 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 7</span>
+                                    <i class="fa-solid fa-border-all text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Plans & Elevations Viewer</h3>
+                                <p class="text-xs text-slate-600 mb-4">Understand orthogonal projections, plan views, and elevations.</p>
+                            </div>
+                            <button onclick="openF3Ch7Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 8 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 8</span>
+                                    <i class="fa-solid fa-compass-drafting text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Loci in 2D Simulator</h3>
+                                <p class="text-xs text-slate-600 mb-4">Simulate 2D loci equidistant from points or lines.</p>
+                            </div>
+                            <button onclick="openF3Ch8Tool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                        <!-- Ch 9 Tool -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs card-hover flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Chapter 9</span>
+                                    <i class="fa-solid fa-chart-line text-purple-500"></i>
+                                </div>
+                                <h3 class="font-bold font-heading text-slate-900 text-base mb-1">Straight Line Form Converter</h3>
+                                <p class="text-xs text-slate-600 mb-4">Convert between $Ax+By=C$, $y=mx+c$, and $x/a + y/b = 1$.</p>
+                            </div>
+                            <button onclick="openForm3LineTool()" class="w-full py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white font-bold text-xs transition">
+                                Launch Tool
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- SEE MORE CODE INSPECTOR BUTTON -->
+                    <div class="mt-6 bg-purple-50/80 border border-purple-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-code"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Developer & Teacher Code Inspector</h4>
+                                <p class="text-xs text-slate-500">View the HTML, CSS, and JavaScript source code for Form 3 tools.</p>
+                            </div>
+                        </div>
+                        <button onclick="showCodeViewer('Form 3 Mathematics Tools Code', form3CodeSnippet)" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-code text-purple-400"></i> See More / View HTML Code
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+        </div>
 
     </main>
 
-    <!-- Interactive Modal Container -->
-    <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-bounce-slow" style="animation-duration: 0.3s;">
-            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm font-bold">
+    <!-- Universal Interactive Tool Modal -->
+    <div id="tool-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeToolModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm font-bold">
                 ✕
             </button>
-            <div id="modal-content">
-                <!-- Dynamic Content Loaded via JS -->
+            <div id="tool-modal-body">
+                <!-- Tool Content Injected dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- Footer Section -->
-    <footer class="bg-slate-900 text-white border-t border-slate-800 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center border-b border-slate-800 pb-8">
-                
-                <div class="md:col-span-6 space-y-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xl">
-                            <i class="fa-solid fa-square-root-variable"></i>
-                        </div>
-                        <span class="text-xl font-bold font-heading">Teacher Eimie Math's Kit</span>
+    <!-- Source Code Viewer Modal ("See More Link Button to View HTML Code") -->
+    <div id="code-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4 sm:p-6">
+        <div class="bg-slate-900 text-slate-100 rounded-3xl max-w-4xl w-full h-[85vh] flex flex-col shadow-2xl border border-slate-700 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-code"></i>
                     </div>
-                    <p class="text-xs text-slate-400 max-w-md leading-relaxed">
-                        An interactive secondary school mathematics teaching and learning hub designed to make math intuitive, visual, and engaging for Form 1, Form 2, and Form 3 students.
-                    </p>
+                    <div>
+                        <h3 id="code-modal-title" class="font-bold font-heading text-slate-100 text-sm sm:text-base">
+                            Source Code Inspector
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Copy or inspect the underlying HTML / JS snippet</p>
+                    </div>
                 </div>
-
-                <div class="md:col-span-6 flex flex-col sm:flex-row gap-3 justify-end">
-                    <a href="https://am-theteatech.github.io/mathwiz/" target="_blank" class="px-4 py-2.5 rounded-xl bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600 hover:text-white font-bold text-xs transition text-center flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-rocket"></i> MathWiz Portal
-                    </a>
-                    <a href="https://am-theteatech.github.io/mathwiz/theoryofslope.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-teal-600/30 border border-teal-500/40 text-teal-300 hover:bg-teal-600 hover:text-white font-bold text-xs transition text-center flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-chart-line"></i> Theory of Slope
-                    </a>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyCodeSnippet()" class="px-3 py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600 border border-purple-500/40 text-purple-300 hover:text-white font-bold text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-copy"></i> Copy Code
+                    </button>
+                    <button onclick="closeCodeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">
+                        ✕
+                    </button>
                 </div>
-
             </div>
 
-            <div class="pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
-                <p>© 2026 Teacher Eimie Math's Digital Kit. Crafted for Classroom & Self-Paced Learning.</p>
-                <div class="flex gap-4 text-slate-400">
-                    <span class="hover:text-purple-400 cursor-pointer">KSSM Mathematics</span>
-                    <span>•</span>
-                    <span class="hover:text-purple-400 cursor-pointer">Form 1 - Form 3</span>
+            <!-- Code Content Body -->
+            <div class="p-4 sm:p-6 flex-1 overflow-y-auto bg-slate-950 font-mono text-xs text-emerald-400 leading-relaxed">
+                <pre id="code-modal-content" class="whitespace-pre-wrap select-all"></pre>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3 bg-slate-900 border-t border-slate-800 text-right shrink-0">
+                <button onclick="closeCodeModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs">
+                    Close Code Inspector
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-white border-t border-slate-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-800 pb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xl">
+                        <i class="fa-solid fa-square-root-variable"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold font-heading text-base">Teacher Eimie Math's Digital Kit</h4>
+                        <p class="text-xs text-slate-400">Malaysian KSSM Secondary Mathematics Portal (35 Chapters)</p>
+                    </div>
                 </div>
+                <div class="flex items-center gap-3 text-xs font-semibold">
+                    <button onclick="navigateTo('home')" class="text-slate-400 hover:text-white transition">Home Hub</button>
+                    <span>•</span>
+                    <button onclick="navigateTo('form1')" class="text-slate-400 hover:text-emerald-400 transition">Form 1 (13 Ch)</button>
+                    <span>•</span>
+                    <button onclick="navigateTo('form2')" class="text-slate-400 hover:text-blue-400 transition">Form 2 (13 Ch)</button>
+                    <span>•</span>
+                    <button onclick="navigateTo('form3')" class="text-slate-400 hover:text-purple-400 transition">Form 3 (9 Ch)</button>
+                </div>
+            </div>
+            <div class="pt-6 text-center sm:text-left text-xs text-slate-500">
+                <p>© 2026 Teacher Eimie Math Digital Kit. Designed for Interactive Classroom & Self-Paced Learning.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Toggle mobile menu visibility
-        function toggleMobileMenu() {
+        // Explicitly attach router to global window object
+        window.navigateTo = function(pageId) {
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(v => v.classList.add('hidden'));
+
+            const target = document.getElementById('view-' + pageId);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.location.hash = pageId;
+            }
+
+            // Update navbar active state highlights
+            const btns = {
+                'home': document.getElementById('nav-btn-home'),
+                'form1': document.getElementById('nav-btn-form1'),
+                'form2': document.getElementById('nav-btn-form2'),
+                'form3': document.getElementById('nav-btn-form3')
+            };
+
+            Object.keys(btns).forEach(key => {
+                if (btns[key]) {
+                    btns[key].className = "px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition flex items-center gap-2";
+                }
+            });
+
+            if (btns[pageId]) {
+                if (pageId === 'home') btns['home'].className = "px-4 py-2.5 rounded-xl bg-slate-100 font-bold text-slate-900 transition flex items-center gap-2";
+                if (pageId === 'form1') btns['form1'].className = "px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 font-bold transition flex items-center gap-2";
+                if (pageId === 'form2') btns['form2'].className = "px-4 py-2.5 rounded-xl bg-blue-50 text-blue-800 font-bold transition flex items-center gap-2";
+                if (pageId === 'form3') btns['form3'].className = "px-4 py-2.5 rounded-xl bg-purple-50 text-purple-800 font-bold transition flex items-center gap-2";
+            }
+        };
+
+        const navigateTo = window.navigateTo;
+
+        // Toggle Mobile Menu
+        window.toggleMobileMenu = function() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('menu-icon');
             if (menu.classList.contains('hidden')) {
@@ -721,196 +1223,307 @@
                 menu.classList.add('hidden');
                 icon.className = "fa-solid fa-bars text-lg";
             }
-        }
+        };
+        const toggleMobileMenu = window.toggleMobileMenu;
 
-        // Filter Form Sections
-        function filterForm(formNum) {
-            const sections = document.querySelectorAll('.topic-section');
-            const btns = {
-                'all': document.getElementById('btn-filter-all'),
-                '1': document.getElementById('btn-filter-1'),
-                '2': document.getElementById('btn-filter-2'),
-                '3': document.getElementById('btn-filter-3')
-            };
-
-            // Reset button styles
-            Object.keys(btns).forEach(key => {
-                if (btns[key]) {
-                    btns[key].className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs transition";
-                }
-            });
-
-            // Highlight active filter button
-            if (formNum === 'all') {
-                btns['all'].className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow-xs transition";
-            } else if (formNum === '1') {
-                btns['1'].className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-xs transition";
-            } else if (formNum === '2') {
-                btns['2'].className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-xs transition";
-            } else if (formNum === '3') {
-                btns['3'].className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow-xs transition";
-            }
-
-            sections.forEach(sec => {
-                if (formNum === 'all' || sec.getAttribute('data-form') === formNum) {
-                    sec.classList.remove('hidden');
-                } else {
-                    sec.classList.add('hidden');
-                }
-            });
-        }
-
-        // Real-time search filter for topics
-        function filterTopics() {
-            const query = document.getElementById('topic-search').value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.topic-card');
-
-            cards.forEach(card => {
-                const title = card.getAttribute('data-title') || '';
-                const cardText = card.innerText.toLowerCase();
-                if (title.includes(query) || cardText.includes(query)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Quick Tools Switcher
-        function switchQuickTool(tool) {
-            const slope = document.getElementById('tool-slope');
-            const pyth = document.getElementById('tool-pythagoras');
-            const form = document.getElementById('tool-formula');
-
-            const btnSlope = document.getElementById('tool-btn-slope');
-            const btnPyth = document.getElementById('tool-btn-pythagoras');
-            const btnForm = document.getElementById('tool-btn-formula');
-
-            slope.classList.add('hidden');
-            pyth.classList.add('hidden');
-            form.classList.add('hidden');
-
-            btnSlope.className = "w-full p-3.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs text-left flex items-center justify-between hover:border-slate-300 transition";
-            btnPyth.className = "w-full p-3.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs text-left flex items-center justify-between hover:border-slate-300 transition";
-            btnForm.className = "w-full p-3.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs text-left flex items-center justify-between hover:border-slate-300 transition";
-
-            if (tool === 'slope') {
-                slope.classList.remove('hidden');
-                btnSlope.className = "w-full p-3.5 rounded-xl border-2 border-purple-600 bg-purple-50 text-purple-900 font-bold text-xs text-left flex items-center justify-between transition";
-            } else if (tool === 'pythagoras') {
-                pyth.classList.remove('hidden');
-                btnPyth.className = "w-full p-3.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs text-left flex items-center justify-between transition";
-            } else if (tool === 'formula') {
-                form.classList.remove('hidden');
-                btnForm.className = "w-full p-3.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-xs text-left flex items-center justify-between transition";
-            }
-        }
-
-        // Calculate slope m
-        function calcSlope() {
-            const x1 = parseFloat(document.getElementById('slope-x1').value) || 0;
-            const y1 = parseFloat(document.getElementById('slope-y1').value) || 0;
-            const x2 = parseFloat(document.getElementById('slope-x2').value) || 0;
-            const y2 = parseFloat(document.getElementById('slope-y2').value) || 0;
-
-            const res = document.getElementById('slope-result');
-            if (x2 - x1 === 0) {
-                res.innerText = "Undefined (Vertical Line)";
+        // Initialise Route based on Hash or default to 'home'
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (['home', 'form1', 'form2', 'form3'].includes(hash)) {
+                navigateTo(hash);
             } else {
-                const m = (y2 - y1) / (x2 - x1);
-                res.innerText = m.toFixed(2) + ` (${y2 - y1}/${x2 - x1})`;
+                navigateTo('home');
             }
-        }
+        });
 
-        // Calculate Pythagoras
-        function calcPythagoras() {
-            const a = parseFloat(document.getElementById('pyth-a').value) || 0;
-            const b = parseFloat(document.getElementById('pyth-b').value) || 0;
-            const c = Math.sqrt((a * a) + (b * b));
-            document.getElementById('pyth-result').innerText = c.toFixed(2);
-        }
-
-        // Modal Handler Functions
-        function openModal(title, htmlContent) {
-            const container = document.getElementById('modal-container');
-            const content = document.getElementById('modal-content');
-            content.innerHTML = `
-                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">${title}</h3>
-                <div class="text-sm text-slate-600 space-y-3">${htmlContent}</div>
+        // Universal Modal Control
+        function openToolModal(title, contentHtml) {
+            const modal = document.getElementById('tool-modal');
+            const body = document.getElementById('tool-modal-body');
+            body.innerHTML = `
+                <h3 class="text-lg font-bold font-heading text-slate-900 mb-3">${title}</h3>
+                <div class="text-xs text-slate-600 space-y-3">${contentHtml}</div>
                 <div class="mt-5 text-right">
-                    <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs">Close</button>
+                    <button onclick="closeToolModal()" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs">Close</button>
                 </div>
             `;
-            container.classList.remove('hidden');
-            container.classList.add('flex');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
-        function closeModal() {
-            const container = document.getElementById('modal-container');
-            container.classList.add('hidden');
-            container.classList.remove('flex');
+        function closeToolModal() {
+            const modal = document.getElementById('tool-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        function openIntegerTool() {
-            openModal("Form 1: Integer Calculator", `
-                <p>Quickly calculate signed integer additions, subtractions, and multiplications:</p>
-                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-center my-2">
-                    <span class="font-mono text-emerald-900 font-bold text-lg">(-5) + (+8) - (-3) = <span class="text-emerald-600">+6</span></span>
-                </div>
-                <p class="text-xs text-slate-500">Remember: Two like signs (+)(+) or (-)(-) produce a positive (+). Two unlike signs produce a negative (-).</p>
-            `);
-        }
-
-        function openAlgebraTool() {
-            openModal("Form 1: Linear Equation Helper", `
-                <p>Solving single variable linear equations:</p>
-                <div class="bg-slate-100 p-3 rounded-xl font-mono text-xs text-slate-800 space-y-1">
-                    <div>2x + 4 = 10</div>
-                    <div>2x = 10 - 4</div>
-                    <div>2x = 6  ➔  <b>x = 3</b></div>
+        // ================= FORM 1 TOOL MODALS =================
+        function openForm1IntegerTool() {
+            openToolModal("Form 1 Ch 1: Signed Integer Calculator", `
+                <p class="font-semibold">Evaluate BODMAS & Signed Operations:</p>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 space-y-1 font-mono text-xs text-emerald-900">
+                    <div>(-6) + (+10) = +4</div>
+                    <div>(-3) × (-5) = +15</div>
+                    <div>12 ÷ (-4) + 5 = 2</div>
                 </div>
             `);
         }
 
-        function openRatioTool() {
-            openModal("Form 1: Ratio & Proportion", `
-                <p>Ratio simplification tool:</p>
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-center font-mono text-xs font-bold text-amber-900">
-                    Ratio 12 : 18 : 24  ➔ Simplified (÷6) ➔  2 : 3 : 4
+        function openF1Ch2Tool() {
+            openToolModal("Form 1 Ch 2: Highest Common Factor (HCF) & LCM", `
+                <p>For numbers <b>12</b> and <b>18</b>:</p>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 font-mono text-xs space-y-1">
+                    <div>Prime factors of 12: 2 × 2 × 3</div>
+                    <div>Prime factors of 18: 2 × 3 × 3</div>
+                    <div class="font-bold text-emerald-800">HCF = 2 × 3 = 6</div>
+                    <div class="font-bold text-emerald-800">LCM = 2 × 2 × 3 × 3 = 36</div>
                 </div>
             `);
         }
 
-        function openSequenceTool() {
-            openModal("Form 2: Number Sequences", `
-                <p>Common Patterns:</p>
-                <ul class="list-disc pl-5 text-xs space-y-1">
-                    <li><b>Even Numbers:</b> 2, 4, 6, 8, ...</li>
-                    <li><b>Fibonacci:</b> 0, 1, 1, 2, 3, 5, 8, 13, ...</li>
-                    <li><b>Pascal's Triangle:</b> Row sums double each row!</li>
-                </ul>
-            `);
-        }
-
-        function openPythagorasTool() {
-            calcPythagoras();
-            switchQuickTool('pythagoras');
-            document.getElementById('quick-tools').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function openCircleTool() {
-            openModal("Form 2: Circle Formula Quick Reference", `
-                <div class="space-y-2 text-xs font-mono">
-                    <div class="p-2.5 bg-blue-50 rounded-xl">Circumference = 2 × π × r</div>
-                    <div class="p-2.5 bg-blue-50 rounded-xl">Area of Circle = π × r²</div>
-                    <div class="p-2.5 bg-blue-50 rounded-xl">Arc Length = (θ / 360°) × 2πr</div>
+        function openF1Ch3Tool() {
+            openToolModal("Form 1 Ch 3: Squares, Cubes & Roots", `
+                <div class="bg-slate-100 p-3 rounded-xl font-mono text-xs space-y-1.5">
+                    <div>5² = 25  ➜  √25 = 5</div>
+                    <div>4³ = 64  ➜  ∛64 = 4</div>
                 </div>
             `);
         }
 
-        function openIndicesTool() {
-            openModal("Form 3: Laws of Indices", `
-                <div class="space-y-2 text-xs font-mono">
+        function openForm1RatioTool() {
+            openToolModal("Form 1 Ch 4: Ratio & Proportion", `
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 font-mono text-xs text-center font-bold text-emerald-900">
+                    15 : 25 : 35  ➔ Divide by 5 ➔  3 : 5 : 7
+                </div>
+            `);
+        }
+
+        function openF1Ch5Tool() {
+            openToolModal("Form 1 Ch 5: Algebraic Expressions", `
+                <p>Expression: <span class="font-mono font-bold">5x + 3y - 7</span></p>
+                <div class="bg-slate-100 p-3 rounded-xl text-xs space-y-1 font-mono">
+                    <div>Variables: x, y</div>
+                    <div>Coefficient of x = 5, Coefficient of y = 3</div>
+                    <div>Constant term = -7</div>
+                </div>
+            `);
+        }
+
+        function openForm1AlgebraTool() {
+            openToolModal("Form 1 Ch 6: Linear Equation Solver", `
+                <p>Solving <span class="font-mono font-bold">2x + 5 = 15</span>:</p>
+                <div class="bg-slate-100 p-3 rounded-xl font-mono text-xs space-y-1">
+                    <div>2x = 15 - 5 ➔ 2x = 10</div>
+                    <div>x = 10 / 2</div>
+                    <div class="font-bold text-emerald-700">x = 5</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch7Tool() {
+            openToolModal("Form 1 Ch 7: Linear Inequalities", `
+                <p>Solving <span class="font-mono font-bold">3x - 4 > 8</span>:</p>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 font-mono text-xs space-y-1 text-emerald-900">
+                    <div>3x > 12</div>
+                    <div class="font-bold">x > 4</div>
+                    <p class="text-[11px] text-slate-500 font-sans mt-1">*Remember: Multiplying/dividing by negative numbers reverses the inequality sign.</p>
+                </div>
+            `);
+        }
+
+        function openF1Ch8Tool() {
+            openToolModal("Form 1 Ch 8: Lines & Angles", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Complementary Angles: a + b = 90°</div>
+                    <div>Supplementary Angles: a + b = 180°</div>
+                    <div>Conjugate Angles: a + b = 360°</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch9Tool() {
+            openToolModal("Form 1 Ch 9: Polygon Interior Angles", `
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs font-mono space-y-1 text-emerald-900">
+                    <div>Formula: Sum = (n - 2) × 180°</div>
+                    <div>Pentagon (n=5): (5 - 2) × 180° = 540°</div>
+                    <div>Hexagon (n=6): (6 - 2) × 180° = 720°</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch10Tool() {
+            openToolModal("Form 1 Ch 10: Area Formulas", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Triangle = ½ × base × height</div>
+                    <div>Parallelogram = base × height</div>
+                    <div>Trapezium = ½ × (a + b) × height</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch11Tool() {
+            openToolModal("Form 1 Ch 11: Set Theory", `
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs font-mono space-y-1">
+                    <div>A = {1, 2, 3}, B = {3, 4, 5}</div>
+                    <div>Intersection A ∩ B = {3}</div>
+                    <div>Union A ∪ B = {1, 2, 3, 4, 5}</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch12Tool() {
+            openToolModal("Form 1 Ch 12: Data Handling", `
+                <p>Data: 3, 5, 7, 5, 10</p>
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Mean = (3+5+7+5+10)/5 = 6</div>
+                    <div>Median = 5 (middle value)</div>
+                    <div>Mode = 5 (most frequent)</div>
+                </div>
+            `);
+        }
+
+        function openF1Ch13Tool() {
+            openToolModal("Form 1 Ch 13: Pythagoras' Theorem", `
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs font-mono space-y-1 text-emerald-900">
+                    <div>a = 3, b = 4</div>
+                    <div>c² = 3² + 4² = 25</div>
+                    <div class="font-bold">Hypotenuse c = √25 = 5</div>
+                </div>
+            `);
+        }
+
+
+        // ================= FORM 2 TOOL MODALS =================
+        function openForm2SequenceTool() {
+            openToolModal("Form 2 Ch 1: Sequence & Fibonacci", `
+                <p class="font-semibold">Fibonacci Sequence:</p>
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 font-mono text-xs text-blue-900">
+                    0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+                </div>
+            `);
+        }
+
+        function openF2Ch2Tool() {
+            openToolModal("Form 2 Ch 2: Quadratic Factorisation", `
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 font-mono text-xs text-blue-900 space-y-1">
+                    <div>x² + 5x + 6</div>
+                    <div class="font-bold">Factorised: (x + 2)(x + 3)</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch3Tool() {
+            openToolModal("Form 2 Ch 3: Subject of Formula", `
+                <p>Given <span class="font-mono font-bold">v = u + at</span>, make <b>t</b> the subject:</p>
+                <div class="bg-slate-100 p-3 rounded-xl font-mono text-xs space-y-1">
+                    <div>v - u = at</div>
+                    <div class="font-bold text-blue-700">t = (v - u) / a</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch4Tool() {
+            openToolModal("Form 2 Ch 4: Regular Polygon Angles", `
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 font-mono text-xs text-blue-900 space-y-1">
+                    <div>Octagon (n=8):</div>
+                    <div>Exterior Angle = 360° / 8 = 45°</div>
+                    <div>Interior Angle = 180° - 45° = 135°</div>
+                </div>
+            `);
+        }
+
+        function openForm2CircleTool() {
+            openToolModal("Form 2 Ch 5: Circle Geometry", `
+                <div class="space-y-1.5 text-xs font-mono">
+                    <div class="p-2 bg-blue-50 border border-blue-200 rounded-lg">Circumference = 2πr</div>
+                    <div class="p-2 bg-blue-50 border border-blue-200 rounded-lg">Area = πr²</div>
+                    <div class="p-2 bg-blue-50 border border-blue-200 rounded-lg">Arc Length = (θ/360°) × 2πr</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch6Tool() {
+            openToolModal("Form 2 Ch 6: 3D Geometry", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Cylinder Volume = πr²h</div>
+                    <div>Cone Volume = ⅓πr²h</div>
+                    <div>Sphere Volume = ⁴/₃πr³</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch7Tool() {
+            openToolModal("Form 2 Ch 7: Coordinates", `
+                <p>Points A(1, 2) and B(4, 6):</p>
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-xs font-mono space-y-1 text-blue-900">
+                    <div>Distance = √((4-1)² + (6-2)²) = √(9+16) = 5</div>
+                    <div>Midpoint = ((1+4)/2, (2+6)/2) = (2.5, 4)</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch8Tool() {
+            openToolModal("Form 2 Ch 8: Graphs of Functions", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Linear: y = mx + c (Straight Line)</div>
+                    <div>Quadratic: y = ax² + bx + c (Parabola)</div>
+                    <div>Cubic: y = ax³ + c</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch9Tool() {
+            openToolModal("Form 2 Ch 9: Speed & Acceleration", `
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-xs font-mono space-y-1 text-blue-900">
+                    <div>Speed = Distance / Time</div>
+                    <div>Acceleration = (Final Speed - Initial Speed) / Time</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch10Tool() {
+            openToolModal("Form 2 Ch 10: Gradient of a Line", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Gradient m = Vertical Distance / Horizontal Distance</div>
+                    <div>m = (y₂ - y₁) / (x₂ - x₁)</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch11Tool() {
+            openToolModal("Form 2 Ch 11: Isometric Transformations", `
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-xs font-mono space-y-1">
+                    <div><b>Translation:</b> Vector (a, b) shift</div>
+                    <div><b>Reflection:</b> Flip over axis line</div>
+                    <div><b>Rotation:</b> Center, angle, direction</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch12Tool() {
+            openToolModal("Form 2 Ch 12: Central Tendency", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Mean = Sum of values / Total frequency</div>
+                    <div>Median = Middle score when ordered</div>
+                    <div>Mode = Value with highest frequency</div>
+                </div>
+            `);
+        }
+
+        function openF2Ch13Tool() {
+            openToolModal("Form 2 Ch 13: Simple Probability", `
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-xs font-mono space-y-1 text-blue-900">
+                    <div>P(Event A) = n(A) / n(S)</div>
+                    <div>Complementary Event P(A') = 1 - P(A)</div>
+                </div>
+            `);
+        }
+
+
+        // ================= FORM 3 TOOL MODALS =================
+        function openForm3IndicesTool() {
+            openToolModal("Form 3 Ch 1: Laws of Indices", `
+                <div class="space-y-1.5 text-xs font-mono">
                     <div class="p-2 bg-purple-50 rounded-lg">aᵐ × aⁿ = aᵐ⁺ⁿ</div>
                     <div class="p-2 bg-purple-50 rounded-lg">aᵐ ÷ aⁿ = aᵐ⁻ⁿ</div>
                     <div class="p-2 bg-purple-50 rounded-lg">(aᵐ)ⁿ = aᵐⁿ</div>
@@ -919,15 +1532,154 @@
             `);
         }
 
-        function openTrigTool() {
-            openModal("Form 3: Trigonometric Ratios", `
-                <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-xs space-y-2 font-medium">
+        function openF3Ch2Tool() {
+            openToolModal("Form 3 Ch 2: Standard Form", `
+                <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs font-mono text-purple-900 space-y-1">
+                    <div>Scientific Format: A × 10ⁿ (1 ≤ A < 10)</div>
+                    <div>45,000 = 4.5 × 10⁴</div>
+                    <div>0.00032 = 3.2 × 10⁻⁴</div>
+                </div>
+            `);
+        }
+
+        function openF3Ch3Tool() {
+            openToolModal("Form 3 Ch 3: Consumer Mathematics", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Simple Interest: I = Prt</div>
+                    <div>Compound Interest: A = P(1 + r/n)ⁿᵗ</div>
+                </div>
+            `);
+        }
+
+        function openF3Ch4Tool() {
+            openToolModal("Form 3 Ch 4: Scale Drawings", `
+                <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs font-mono text-purple-900 space-y-1">
+                    <div>Scale = Measurement on Drawing : Measurement of Object</div>
+                    <div>Represented as 1 : n</div>
+                </div>
+            `);
+        }
+
+        function openForm3TrigTool() {
+            openToolModal("Form 3 Ch 5: Trigonometric Ratios", `
+                <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl text-xs space-y-2">
                     <div><b>SOH:</b> sin(θ) = Opposite / Hypotenuse</div>
                     <div><b>CAH:</b> cos(θ) = Adjacent / Hypotenuse</div>
                     <div><b>TOA:</b> tan(θ) = Opposite / Adjacent</div>
                 </div>
             `);
         }
+
+        function openF3Ch6Tool() {
+            openToolModal("Form 3 Ch 6: Angles & Tangents in Circles", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Angle at center = 2 × Angle at circumference</div>
+                    <div>Cyclic Quad opposite angles sum to 180°</div>
+                    <div>Radius to Tangent angle = 90°</div>
+                </div>
+            `);
+        }
+
+        function openF3Ch7Tool() {
+            openToolModal("Form 3 Ch 7: Plans & Elevations", `
+                <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs font-mono space-y-1 text-purple-900">
+                    <div><b>Plan:</b> View from the top</div>
+                    <div><b>Front Elevation:</b> View from the front</div>
+                    <div><b>Side Elevation:</b> View from the side</div>
+                </div>
+            `);
+        }
+
+        function openF3Ch8Tool() {
+            openToolModal("Form 3 Ch 8: Loci in Two Dimensions", `
+                <div class="bg-slate-100 p-3 rounded-xl text-xs font-mono space-y-1">
+                    <div>Constant distance from a fixed point ➔ Circle</div>
+                    <div>Equidistant from two fixed points ➔ Perpendicular Bisector</div>
+                </div>
+            `);
+        }
+
+        function openForm3LineTool() {
+            openToolModal("Form 3 Ch 9: Straight Line Equation Forms", `
+                <div class="space-y-1.5 text-xs font-mono">
+                    <div class="p-2 bg-purple-50 rounded-lg">General Form: Ax + By = C</div>
+                    <div class="p-2 bg-purple-50 rounded-lg">Gradient Form: y = mx + c</div>
+                    <div class="p-2 bg-purple-50 rounded-lg">Intercept Form: x/a + y/b = 1</div>
+                </div>
+            `);
+        }
+
+        // Code Inspector functions
+        function showCodeViewer(title, snippetText) {
+            document.getElementById('code-modal-title').innerText = title;
+            document.getElementById('code-modal-content').innerText = snippetText;
+            const modal = document.getElementById('code-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCodeModal() {
+            const modal = document.getElementById('code-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyCodeSnippet() {
+            const text = document.getElementById('code-modal-content').innerText;
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            alert("Code snippet copied to clipboard!");
+        }
+
+        const form1CodeSnippet = `<!-- Form 1 Classroom Tools Code Snippet (13 Chapters) -->
+<div id="form1-tools-suite">
+  <h3>Form 1 KSSM Mathematics Tools</h3>
+  <script>
+    function calcInteger(a, b, op) {
+      if (op === '+') return a + b;
+      if (op === '-') return a - b;
+      if (op === '*') return a * b;
+      return a / b;
+    }
+    function solveLinearEq(a, b, c) {
+      return (c - b) / a;
+    }
+  <\/script>
+</div>`;
+
+        const form2CodeSnippet = `<!-- Form 2 Classroom Tools Code Snippet (13 Chapters) -->
+<div id="form2-tools-suite">
+  <h3>Form 2 KSSM Mathematics Tools</h3>
+  <script>
+    function calcCircle(radius) {
+      const area = Math.PI * radius * radius;
+      const circumference = 2 * Math.PI * radius;
+      return { area: area.toFixed(2), circumference: circumference.toFixed(2) };
+    }
+    function calcSpeed(distance, time) {
+      return distance / time;
+    }
+  <\/script>
+</div>`;
+
+        const form3CodeSnippet = `<!-- Form 3 Classroom Tools Code Snippet (9 Chapters) -->
+<div id="form3-tools-suite">
+  <h3>Form 3 KSSM Mathematics Tools</h3>
+  <script>
+    function getSlopeIntercept(A, B, C) {
+      const m = -A / B;
+      const c = C / B;
+      return "y = " + m.toFixed(2) + "x + " + c.toFixed(2);
+    }
+    function calcSimpleInterest(p, r, t) {
+      return p * (r / 100) * t;
+    }
+  <\/script>
+</div>`;
     </script>
 </body>
 </html>
