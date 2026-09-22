@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mathematics Form 3 - Chapter 9: Straight Lines</title>
+
+  <!-- Tailwind CSS for rapid responsive utility layout -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for Teacher Dashboard analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* Design Tokens & Theme Setup */
+    :root {
+      --navy-bg: #0d1117;
+      --navy-card: #161b22;
+      --navy-border: #30363d;
+      --purple-accent: #8a2be2;
+      --purple-hover: #a04bf5;
+      --teal-accent: #00d2d3;
+      --green-submit: #2ea44f;
+      --green-hover: #3fb950;
+      --text-white: #f0f6fc;
+      --text-muted: #8b949e;
+      --danger-red: #da3633;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--navy-bg);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Strict Pointer Events & Tab Visibility Rules */
+    .tab-content {
+      display: none !important;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block !important;
+      opacity: 1;
+    }
+
+    .tab-btn {
+      position: relative;
+      z-index: 10;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      user-select: none;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .tab-btn:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-white);
+    }
+
+    .tab-btn.active {
+      background-color: var(--purple-accent) !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+    }
+
+    /* Responsive Scrollbar for Nav */
+    .nav-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    .nav-scroll::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .nav-scroll::-webkit-scrollbar-thumb {
+      background: var(--navy-border);
+      border-radius: 4px;
+    }
+
+    /* Canvas styling */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      background: #05080e;
+      border-radius: 8px;
+      border: 1px solid var(--navy-border);
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 3;
+    }
+
+    .math-var {
+      font-style: italic;
+      font-family: 'Times New Roman', Times, serif;
+      font-weight: 600;
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      accent-color: var(--purple-accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="bg-[#161b22] border-b border-[#30363d] sticky top-0 z-50 px-4 py-3 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-lg md:text-xl font-bold text-[#00d2d3]">Mathematics Form 3</h1>
+          <p class="text-xs text-[#8b949e]">Chapter 9: Straight Lines</p>
+        </div>
+        
+        <!-- Student Header Badge (Hidden until registered) -->
+        <div id="studentHeaderBadge" class="hidden md:hidden bg-purple-950/60 border border-[#8a2be2] text-xs px-3 py-1.5 rounded-full text-purple-200 font-semibold">
+          👤 <span id="headerStudentNameMobile">-</span> (<span id="headerClassNameMobile">-</span>)
+        </div>
+      </div>
+
+      <!-- Navigation Tabs Container -->
+      <div class="flex items-center justify-between gap-2 overflow-x-auto nav-scroll pb-1 md:pb-0">
+        <nav class="flex bg-[#0d1117] p-1.5 rounded-xl border border-[#30363d] gap-1 shrink-0" role="tablist">
+          <button type="button" class="tab-btn active px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold text-[#8b949e]" data-tab="explore">
+            1. Learn & Explore
+          </button>
+          <button type="button" class="tab-btn px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold text-[#8b949e]" data-tab="parallel">
+            2. Parallel Lines
+          </button>
+          <button type="button" class="tab-btn px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold text-[#8b949e]" data-tab="practice">
+            3. Practice
+          </button>
+          <button type="button" class="tab-btn px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold text-[#8b949e]" data-tab="assessment">
+            4. Assessment
+          </button>
+          <button type="button" class="tab-btn px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold text-[#8b949e]" data-tab="dashboard">
+            5. Teacher Dashboard
+          </button>
+        </nav>
+
+        <!-- Student Badge for Desktop -->
+        <div id="studentHeaderBadgeDesktop" class="hidden md:block bg-purple-950/60 border border-[#8a2be2] text-xs px-3 py-1.5 rounded-full text-purple-200 font-semibold whitespace-nowrap">
+          👤 <span id="headerStudentNameDesktop">-</span> (<span id="headerClassNameDesktop">-</span>)
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER FOR TAB CONTENTS -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: LEARN & EXPLORE -->
+    <!-- =================================================================== -->
+    <section id="tab-explore" class="tab-content active">
+      <div class="mb-6">
+        <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Exploration of Straight Line Equations (<span class="math-var">y</span> = <span class="math-var">m</span><span class="math-var">x</span> + <span class="math-var">c</span>)</h2>
+        <p class="text-sm text-[#8b949e]">Adjust the gradient (<span class="math-var">m</span>) and <span class="math-var">y</span>-intercept (<span class="math-var">c</span>) to observe straight line movements on the Cartesian plane in real-time.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Interactive Canvas Column -->
+        <div class="lg:col-span-2 bg-[#161b22] border border-[#30363d] p-4 rounded-xl flex flex-col justify-center items-center shadow-lg">
+          <div class="canvas-container w-full">
+            <canvas id="exploreCanvas" width="600" height="450"></canvas>
+          </div>
+          <div class="mt-3 text-xs text-[#8b949e] flex justify-between w-full px-2">
+            <span><span class="math-var">x</span>-intercept: <strong id="xInterceptDisplay" class="text-teal-400">-</strong></span>
+            <span><span class="math-var">y</span>-intercept point: <strong id="yInterceptDisplay" class="text-purple-400">(0, 0)</strong></span>
+          </div>
+        </div>
+
+        <!-- Interactive Sliders Control Column -->
+        <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-white border-b border-[#30363d] pb-2 mb-4">Parameter Controls</h3>
+
+            <!-- Slider m -->
+            <div class="mb-5">
+              <div class="flex justify-between items-center mb-1">
+                <label for="inputM" class="text-sm font-bold text-[#8b949e]">Gradient (<span class="math-var">m</span>):</label>
+                <span id="valM" class="text-base font-extrabold text-[#00d2d3] bg-[#0d1117] px-2.5 py-0.5 rounded border border-[#30363d]">1</span>
+              </div>
+              <input type="range" id="inputM" min="-5" max="5" step="0.5" value="1" class="w-full h-2 bg-[#0d1117] rounded-lg cursor-pointer">
+              <p class="text-xs text-[#8b949e] mt-1">Positive value = Slopes upwards to the right, Negative value = Slopes downwards to the right.</p>
+            </div>
+
+            <!-- Slider c -->
+            <div class="mb-5">
+              <div class="flex justify-between items-center mb-1">
+                <label for="inputC" class="text-sm font-bold text-[#8b949e]"><span class="math-var">y</span>-intercept (<span class="math-var">c</span>):</label>
+                <span id="valC" class="text-base font-extrabold text-purple-400 bg-[#0d1117] px-2.5 py-0.5 rounded border border-[#30363d]">0</span>
+              </div>
+              <input type="range" id="inputC" min="-8" max="8" step="1" value="0" class="w-full h-2 bg-[#0d1117] rounded-lg cursor-pointer">
+              <p class="text-xs text-[#8b949e] mt-1">The point where the straight line intersects the <span class="math-var">y</span>-axis.</p>
+            </div>
+          </div>
+
+          <!-- Live Equation Result Box -->
+          <div class="bg-[#0d1117] border border-[#30363d] p-4 rounded-lg text-center mt-4">
+            <span class="text-xs font-semibold uppercase text-[#8b949e] tracking-wider block mb-1">Straight Line Equation</span>
+            <div id="eqDisplay" class="text-2xl font-black text-[#00d2d3]">y = 1x + 0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: PARALLEL LINES -->
+    <!-- =================================================================== -->
+    <section id="tab-parallel" class="tab-content">
+      <div class="mb-6">
+        <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Parallel Lines</h2>
+        <p class="text-sm text-[#8b949e]">Two straight lines are <strong>parallel</strong> if and only if they have equal gradients (<span class="math-var">m</span><sub>1</sub> = <span class="math-var">m</span><sub>2</sub>).</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Canvas Visualizer -->
+        <div class="lg:col-span-2 bg-[#161b22] border border-[#30363d] p-4 rounded-xl flex flex-col justify-center items-center shadow-lg">
+          <div class="canvas-container w-full">
+            <canvas id="parallelCanvas" width="600" height="450"></canvas>
+          </div>
+        </div>
+
+        <!-- Controls & Comparison Card -->
+        <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-white border-b border-[#30363d] pb-2 mb-4">Line Comparison</h3>
+            
+            <!-- Fixed Line 1 Details -->
+            <div class="bg-[#0d1117] p-3 rounded-lg border-l-4 border-blue-400 mb-4">
+              <div class="text-xs font-bold text-blue-400">Line 1 (Fixed)</div>
+              <div class="text-sm font-semibold text-white mt-0.5"><span class="math-var">y</span> = 2<span class="math-var">x</span> + 2</div>
+              <div class="text-xs text-[#8b949e] mt-1">Gradient <span class="math-var">m</span><sub>1</sub> = <strong class="text-white">2</strong></div>
+            </div>
+
+            <!-- Dynamic Line 2 Controls -->
+            <div class="bg-[#0d1117] p-3 rounded-lg border-l-4 border-pink-500 mb-4">
+              <div class="text-xs font-bold text-pink-400 mb-2">Line 2 (Adjust Gradient)</div>
+              
+              <div class="mb-3">
+                <div class="flex justify-between items-center mb-1">
+                  <label for="inputM2" class="text-xs text-[#8b949e]">Gradient <span class="math-var">m</span><sub>2</sub>:</label>
+                  <span id="valM2" class="text-sm font-bold text-pink-400 bg-[#161b22] px-2 py-0.5 rounded border border-[#30363d]">2</span>
+                </div>
+                <input type="range" id="inputM2" min="-4" max="4" step="1" value="2" class="w-full h-2 bg-[#161b22] rounded-lg cursor-pointer">
+              </div>
+
+              <div class="text-sm font-semibold text-white"><span class="math-var">y</span> = <span id="m2Label">2</span><span class="math-var">x</span> &minus; 3</div>
+            </div>
+          </div>
+
+          <!-- Status Indicator Banner -->
+          <div id="parallelStatus" class="p-3.5 rounded-lg text-center font-bold text-sm transition-colors border">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 3: GUIDED PRACTICE -->
+    <!-- =================================================================== -->
+    <section id="tab-practice" class="tab-content">
+      <div class="mb-6">
+        <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Guided Practice & Instant Feedback</h2>
+        <p class="text-sm text-[#8b949e]">Test your understanding interactively. Every question is verified instantly with solution steps.</p>
+      </div>
+
+      <div class="max-w-3xl mx-auto space-y-6">
+        <!-- Practice Question 1 -->
+        <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-teal-950 text-teal-300 border border-teal-700 text-xs font-bold px-2.5 py-0.5 rounded">Question 1</span>
+            <span class="text-xs text-[#8b949e]">Determining Gradient</span>
+          </div>
+          <p class="text-base font-semibold text-white mb-3">Determine the value of the gradient (<span class="math-var">m</span>) for the straight line with equation <span class="math-var">y</span> = 5<span class="math-var">x</span> &minus; 7.</p>
+          
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="practiceAns1" placeholder="Enter value of m (e.g., 5)" class="bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#8a2be2] flex-1 text-sm">
+            <button type="button" id="btnCheckPractice1" class="bg-[#8a2be2] hover:bg-[#a04bf5] text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">Check Answer</button>
+          </div>
+          <div id="practiceFeedback1" class="mt-3 text-sm hidden p-3 rounded-lg border"></div>
+        </div>
+
+        <!-- Practice Question 2 -->
+        <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-purple-950 text-purple-300 border border-purple-700 text-xs font-bold px-2.5 py-0.5 rounded">Question 2</span>
+            <span class="text-xs text-[#8b949e]">Convert to y = mx + c Form</span>
+          </div>
+          <p class="text-base font-semibold text-white mb-3">Given the straight line equation is 2<span class="math-var">y</span> = 6<span class="math-var">x</span> + 8. What is the value of the <span class="math-var">y</span>-intercept (<span class="math-var">c</span>)?</p>
+          
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="practiceAns2" placeholder="Enter value of c" class="bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#8a2be2] flex-1 text-sm">
+            <button type="button" id="btnCheckPractice2" class="bg-[#8a2be2] hover:bg-[#a04bf5] text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">Check Answer</button>
+          </div>
+          <div id="practiceFeedback2" class="mt-3 text-sm hidden p-3 rounded-lg border"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 4: ASSESSMENT (REGISTER FIRST -> UNLOCK QUESTIONS) -->
+    <!-- =================================================================== -->
+    <section id="tab-assessment" class="tab-content">
+      <div class="mb-6 text-center max-w-xl mx-auto">
+        <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Formative Assessment Chapter 9</h2>
+        <p class="text-sm text-[#8b949e]">Complete the attendance registration form below to unlock the assessment questions.</p>
+      </div>
+
+      <!-- REGISTRATION CARD (PHASE 1) -->
+      <div id="registrationCard" class="bg-[#161b22] border border-[#30363d] p-6 md:p-8 rounded-2xl max-w-lg mx-auto shadow-2xl">
+        <div class="text-center mb-6">
+          <div class="w-12 h-12 bg-purple-900/50 border border-[#8a2be2] text-purple-300 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
+            📝
+          </div>
+          <h3 class="text-lg font-bold text-white">Attendance & Registration Form</h3>
+          <p class="text-xs text-[#8b949e]">Please fill in your details correctly before starting.</p>
+        </div>
+
+        <form id="registrationForm" onsubmit="return false;" class="space-y-4">
+          <div>
+            <label for="regStudentName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Full Student Name</label>
+            <input type="text" id="regStudentName" required placeholder="e.g., Alex Johnson" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+          </div>
+
+          <div>
+            <label for="regClassName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Class</label>
+            <select id="regClassName" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+              <option value="">-- Loading Classes from Database... --</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="regTeacherName" class="block text-xs font-bold text-[#8b949e] uppercase mb-1.5">Mathematics Teacher</label>
+            <select id="regTeacherName" required class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+              <option value="">-- Loading Teachers from Database... --</option>
+            </select>
+          </div>
+
+          <button type="button" id="btnStartAssessment" class="w-full bg-[#2ea44f] hover:bg-[#3fb950] text-white font-bold p-3.5 rounded-lg text-sm transition-all shadow-lg mt-2">
+            Submit Attendance & Start Assessment &rarr;
+          </button>
+        </form>
+
+        <div id="regStatusMsg" class="mt-4 text-xs text-center hidden p-2.5 rounded border"></div>
+      </div>
+
+      <!-- QUESTIONS CARD (PHASE 2 - HIDDEN UNTIL REGISTERED) -->
+      <div id="questionsCard" class="hidden max-w-2xl mx-auto bg-[#161b22] border border-[#30363d] p-6 md:p-8 rounded-2xl shadow-2xl">
+        <div class="bg-teal-950/50 border border-teal-700/60 p-4 rounded-xl mb-6 flex justify-between items-center">
+          <div>
+            <div class="text-xs text-teal-300 font-semibold uppercase">Registration Status</div>
+            <div class="text-base font-bold text-white"><span id="activeStudentNameDisplay">-</span></div>
+            <div class="text-xs text-[#8b949e]">Class: <span id="activeClassNameDisplay">-</span> | Teacher: <span id="activeTeacherNameDisplay">-</span></div>
+          </div>
+          <button type="button" id="btnResetRegistration" class="text-xs text-red-400 hover:underline">Change Student</button>
+        </div>
+
+        <form id="assessmentQuestionsForm" onsubmit="return false;" class="space-y-6">
+          <!-- Question 1 -->
+          <div class="border-b border-[#30363d] pb-5">
+            <span class="text-xs font-bold text-[#00d2d3] uppercase block mb-1">Question 1</span>
+            <p class="text-sm md:text-base font-medium text-white mb-3">Determine the gradient value (<span class="math-var">m</span>) for the straight line <span class="math-var">y</span> = &minus;3<span class="math-var">x</span> + 8.</p>
+            <input type="text" id="q1Ans" required placeholder="Enter your answer" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+          </div>
+
+          <!-- Question 2 -->
+          <div class="border-b border-[#30363d] pb-5">
+            <span class="text-xs font-bold text-[#00d2d3] uppercase block mb-1">Question 2</span>
+            <p class="text-sm md:text-base font-medium text-white mb-3">Find the <span class="math-var">y</span>-intercept for the straight line with equation 2<span class="math-var">x</span> &minus; <span class="math-var">y</span> = 6.</p>
+            <input type="text" id="q2Ans" required placeholder="Enter your answer" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+          </div>
+
+          <!-- Question 3 -->
+          <div class="pb-2">
+            <span class="text-xs font-bold text-[#00d2d3] uppercase block mb-1">Question 3</span>
+            <p class="text-sm md:text-base font-medium text-white mb-3">Are the straight lines <span class="math-var">y</span> = 4<span class="math-var">x</span> + 1 and <span class="math-var">y</span> = 4<span class="math-var">x</span> &minus; 9 parallel to each other? (Write: <strong>Yes</strong> or <strong>No</strong>)</p>
+            <input type="text" id="q3Ans" required placeholder="Yes / No" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+          </div>
+
+          <button type="button" id="btnSubmitAssessment" class="w-full bg-[#2ea44f] hover:bg-[#3fb950] text-white font-bold p-3.5 rounded-lg text-sm transition-all shadow-lg">
+            Submit Assessment Answers
+          </button>
+        </form>
+
+        <div id="assessmentResult" class="mt-6 hidden p-4 rounded-xl text-center border"></div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 5: TEACHER DASHBOARD -->
+    <!-- =================================================================== -->
+    <section id="tab-dashboard" class="tab-content">
+      <!-- Login Card -->
+      <div id="teacherLoginForm" class="max-w-md mx-auto bg-[#161b22] border border-[#30363d] p-6 rounded-xl shadow-xl">
+        <h3 class="text-lg font-bold text-white mb-1">Teacher Login</h3>
+        <p class="text-xs text-[#8b949e] mb-4">Access student monitoring and Chapter 9 mark reports.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-[#8b949e] uppercase mb-1">Teacher Passcode</label>
+            <input type="password" id="teacherPassCode" placeholder="Enter code (Demo Passcode: cikgu123)" class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#8a2be2]">
+          </div>
+          <button type="button" id="btnLoginTeacher" class="w-full bg-[#8a2be2] hover:bg-[#a04bf5] text-white font-bold p-3 rounded-lg text-sm transition-colors">
+            Log In to Dashboard
+          </button>
+          <div id="teacherLoginMsg" class="text-xs text-center hidden p-2 rounded text-red-400 bg-red-950/40 border border-red-800"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard View (Hidden until login) -->
+      <div id="teacherDashboardView" class="hidden space-y-6">
+        <div class="flex justify-between items-center bg-[#161b22] p-4 rounded-xl border border-[#30363d]">
+          <div>
+            <h2 class="text-lg font-bold text-white">Teacher Admin Dashboard</h2>
+            <p class="text-xs text-[#8b949e]">Performance Summary - Chapter 9: Straight Lines</p>
+          </div>
+          <button type="button" id="btnLogoutTeacher" class="bg-[#0d1117] border border-[#30363d] text-xs text-[#8b949e] hover:text-white px-3 py-1.5 rounded-lg">Log Out</button>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-[#161b22] border border-[#30363d] p-4 rounded-xl">
+            <div class="text-xs text-[#8b949e] font-semibold uppercase">Student Participation</div>
+            <div id="dashTotalStudents" class="text-2xl font-black text-[#00d2d3] mt-1">1</div>
+          </div>
+          <div class="bg-[#161b22] border border-[#30363d] p-4 rounded-xl">
+            <div class="text-xs text-[#8b949e] font-semibold uppercase">Completed Assessments</div>
+            <div id="dashCompletedAssessments" class="text-2xl font-black text-purple-400 mt-1">1</div>
+          </div>
+          <div class="bg-[#161b22] border border-[#30363d] p-4 rounded-xl">
+            <div class="text-xs text-[#8b949e] font-semibold uppercase">Class Average Score</div>
+            <div id="dashAvgScore" class="text-2xl font-black text-green-400 mt-1">100%</div>
+          </div>
+          <div class="bg-[#161b22] border border-[#30363d] p-4 rounded-xl">
+            <div class="text-xs text-[#8b949e] font-semibold uppercase">Passing Rate</div>
+            <div id="dashPassRate" class="text-2xl font-black text-yellow-400 mt-1">100%</div>
+          </div>
+        </div>
+
+        <!-- Student Submission Table -->
+        <div class="bg-[#161b22] border border-[#30363d] p-5 rounded-xl shadow-lg">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+            <h3 class="text-base font-bold text-white">Student Submission Records (Supabase Sync)</h3>
+            <button type="button" id="btnRefreshSupabase" class="bg-[#0d1117] hover:bg-[#30363d] border border-[#30363d] text-teal-400 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1">
+              🔄 Refresh Supabase Data
+            </button>
+          </div>
+
+          <!-- Supabase Key Settings Box inside Teacher View -->
+          <div class="mb-4 p-3.5 bg-[#0d1117] border border-[#30363d] rounded-lg text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-purple-300">⚡ Supabase Database Connection</span>
+              <span id="supabaseConnectionBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">Anon Key Required</span>
+            </div>
+            <p class="text-[#8b949e]">URL: <code class="text-teal-300">https://woyidtahqksjphyzktmt.supabase.co</code></p>
+            <div class="flex gap-2">
+              <input type="password" id="inputSupabaseKey" placeholder="Enter Supabase Anon / Public Key..." class="flex-1 bg-[#161b22] border border-[#30363d] rounded p-2 text-white focus:outline-none focus:border-[#8a2be2]">
+              <button type="button" id="btnSaveSupabaseKey" class="bg-[#2ea44f] hover:bg-[#3fb950] text-white px-3 py-2 rounded font-bold">Save Key</button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-[#30363d] text-[#8b949e] uppercase">
+                  <th class="p-3">Student Name</th>
+                  <th class="p-3">Class</th>
+                  <th class="p-3">Teacher</th>
+                  <th class="p-3">Attendance / Activity</th>
+                  <th class="p-3">Assessment Score</th>
+                  <th class="p-3">Time/Date</th>
+                </tr>
+              </thead>
+              <tbody id="studentRecordsTableBody" class="divide-y divide-[#30363d] text-white">
+                <!-- Dynamically Inserted -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY_STUDENT = "math_f3_ch9_student";
+    const STORAGE_KEY_RECORDS = "math_f3_ch9_records";
+    const STORAGE_KEY_SUPABASE = "math_f3_ch9_supabase_key";
+
+    const SUPABASE_URL = "https://woyidtahqksjphyzktmt.supabase.co";
+    let supabaseKey = localStorage.getItem(STORAGE_KEY_SUPABASE) || "";
+    let supabaseClient = null;
+
+    let loadedTeachers = [];
+    let loadedClasses = [];
+
+    function initSupabaseClient() {
+      if (window.supabase && supabaseKey) {
+        try {
+          supabaseClient = window.supabase.createClient(SUPABASE_URL, supabaseKey);
+          return true;
+        } catch (err) {
+          console.error("Supabase client init error:", err);
+        }
+      }
+      return false;
+    }
+
+    let currentStudent = JSON.parse(localStorage.getItem(STORAGE_KEY_STUDENT)) || null;
+    let studentRecords = JSON.parse(localStorage.getItem(STORAGE_KEY_RECORDS)) || [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initSupabaseClient();
+      initTabSystem();
+      initExploreCanvas();
+      initParallelCanvas();
+      initPracticeSection();
+      initAssessmentSection();
+      initTeacherDashboard();
+
+      /* Fetch teachers and classes from Supabase */
+      fetchTeachersAndClasses();
+
+      window.addEventListener("resize", () => {
+        drawExplore();
+        drawParallel();
+      });
+
+      if (currentStudent) {
+        updateStudentHeaderBadges(currentStudent.name, currentStudent.className);
+        unlockQuestionsCard(currentStudent);
+      }
+    });
+
+    async function fetchTeachersAndClasses() {
+      const classSelect = document.getElementById("regClassName");
+      const teacherSelect = document.getElementById("regTeacherName");
+
+      const defaultTeachers = [
+        { id: "00000000-0000-0000-0000-000000000001", teacher_name: "Ms. Amylia" }      
+      ];
+
+      const defaultClasses = [
+        { class_name: "3 Bestari" },
+        { class_name: "3 Cemerlang" },
+        { class_name: "3 Dinamik" },
+        { class_name: "3 Inovatif" }
+      ];
+
+      if (supabaseClient) {
+        try {
+          const { data: teachersData, error: tErr } = await supabaseClient
+            .from('teachers')
+            .select('id, teacher_name');
+
+          const { data: classesData, error: cErr } = await supabaseClient
+            .from('classes')
+            .select('id, class_name, teacher_id');
+
+          if (!tErr && teachersData && teachersData.length > 0) {
+            loadedTeachers = teachersData;
+          } else {
+            loadedTeachers = defaultTeachers;
+          }
+
+          if (!cErr && classesData && classesData.length > 0) {
+            loadedClasses = classesData;
+          } else {
+            loadedClasses = defaultClasses;
+          }
+        } catch (e) {
+          console.warn("Could not load teachers/classes from Supabase, using defaults:", e);
+          loadedTeachers = defaultTeachers;
+          loadedClasses = defaultClasses;
+        }
+      } else {
+        loadedTeachers = defaultTeachers;
+        loadedClasses = defaultClasses;
+      }
+
+      /* Populate dropdowns */
+      teacherSelect.innerHTML = `<option value="">-- Select Teacher --</option>` +
+        loadedTeachers.map(t => `<option value="${t.id}">${t.teacher_name}</option>`).join('');
+
+      classSelect.innerHTML = `<option value="">-- Select Class --</option>` +
+        loadedClasses.map(c => `<option value="${c.class_name}">${c.class_name}</option>`).join('');
+    }
+
+    if (studentRecords.length === 0) {
+      studentRecords = [
+        {
+          name: "Ahmad Danish",
+          className: "3 Bestari",
+          teacherName: "Ms. Norizan",
+          score: "3/3",
+          percentage: 100,
+          status: "Excellent",
+          created_at: new Date().toISOString()
+        }
+      ];
+    }
+
+    function updateStudentHeaderBadges(name, className) {
+      const mobileBadge = document.getElementById("studentHeaderBadge");
+      const desktopBadge = document.getElementById("studentHeaderBadgeDesktop");
+      const mobileName = document.getElementById("headerStudentNameMobile");
+      const mobileClass = document.getElementById("headerClassNameMobile");
+      const desktopName = document.getElementById("headerStudentNameDesktop");
+      const desktopClass = document.getElementById("headerClassNameDesktop");
+
+      if (mobileName) mobileName.innerText = name;
+      if (mobileClass) mobileClass.innerText = className;
+      if (desktopName) desktopName.innerText = name;
+      if (desktopClass) desktopClass.innerText = className;
+
+      if (mobileBadge) mobileBadge.classList.remove("hidden");
+      if (desktopBadge) desktopBadge.classList.remove("hidden");
+    }
+
+    function unlockQuestionsCard(student) {
+      const regCard = document.getElementById("registrationCard");
+      const qCard = document.getElementById("questionsCard");
+      const nameDisp = document.getElementById("activeStudentNameDisplay");
+      const classDisp = document.getElementById("activeClassNameDisplay");
+      const teacherDisp = document.getElementById("activeTeacherNameDisplay");
+
+      if (regCard) regCard.classList.add("hidden");
+      if (qCard) qCard.classList.remove("hidden");
+      if (nameDisp) nameDisp.innerText = student.name;
+      if (classDisp) classDisp.innerText = student.className;
+      if (teacherDisp) teacherDisp.innerText = student.teacherName;
+    }
+
+    function initTeacherDashboard() {
+      const loginBtn = document.getElementById("btnLoginTeacher");
+      const logoutBtn = document.getElementById("btnLogoutTeacher");
+      const saveKeyBtn = document.getElementById("btnSaveSupabaseKey");
+      const refreshBtn = document.getElementById("btnRefreshSupabase");
+      const keyInput = document.getElementById("inputSupabaseKey");
+
+      if (keyInput && supabaseKey) {
+        keyInput.value = supabaseKey;
+      }
+
+      if (loginBtn) {
+        loginBtn.addEventListener("click", () => {
+          const pass = document.getElementById("teacherPassCode").value.trim();
+          const msg = document.getElementById("teacherLoginMsg");
+          if (pass === "cikgu123" || pass === "admin") {
+            document.getElementById("teacherLoginForm").classList.add("hidden");
+            document.getElementById("teacherDashboardView").classList.remove("hidden");
+            renderDashboardMetrics();
+          } else {
+            msg.innerText = "Invalid passcode. (Use: cikgu123)";
+            msg.classList.remove("hidden");
+          }
+        });
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          document.getElementById("teacherDashboardView").classList.add("hidden");
+          document.getElementById("teacherLoginForm").classList.remove("hidden");
+        });
+      }
+
+      if (saveKeyBtn) {
+        saveKeyBtn.addEventListener("click", () => {
+          const keyVal = keyInput.value.trim();
+          if (keyVal) {
+            localStorage.setItem(STORAGE_KEY_SUPABASE, keyVal);
+            supabaseKey = keyVal;
+            initSupabaseClient();
+            updateSupabaseBadge(true);
+            fetchTeachersAndClasses();
+            renderDashboardMetrics();
+          }
+        });
+      }
+
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", () => {
+          renderDashboardMetrics();
+        });
+      }
+    }
+
+    function updateSupabaseBadge(isConnected) {
+      const badge = document.getElementById("supabaseConnectionBadge");
+      if (!badge) return;
+      if (isConnected && supabaseClient) {
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-green-950 text-green-300 border border-green-700";
+        badge.innerText = "⚡ Supabase Connected";
+      } else {
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700";
+        badge.innerText = "Anon Key Required";
+      }
+    }
+
+    function initTabSystem() {
+      const tabButtons = document.querySelectorAll(".tab-btn");
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const targetTabId = this.getAttribute("data-tab");
+          if (!targetTabId) return;
+
+          /* Deactivate all tab buttons */
+          tabButtons.forEach(b => b.classList.remove("active"));
+
+          /* Hide all tab content panels */
+          const allContents = document.querySelectorAll(".tab-content");
+          allContents.forEach(c => c.classList.remove("active"));
+
+          /* Activate selected button */
+          this.classList.add("active");
+
+          /* Display targeted content panel */
+          const targetContent = document.getElementById(`tab-${targetTabId}`);
+          if (targetContent) {
+            targetContent.classList.add("active");
+          }
+
+          /* Trigger redraws for Canvas visuals */
+          if (targetTabId === "explore") {
+            setTimeout(drawExplore, 50);
+          } else if (targetTabId === "parallel") {
+            setTimeout(drawParallel, 50);
+          }
+        });
+      });
+    }
+
+    let sliderM, sliderC;
+
+    function initExploreCanvas() {
+      sliderM = document.getElementById("inputM");
+      sliderC = document.getElementById("inputC");
+
+      sliderM.addEventListener("input", drawExplore);
+      sliderC.addEventListener("input", drawExplore);
+
+      drawExplore();
+    }
+
+    function drawExplore() {
+      const canvas = document.getElementById("exploreCanvas");
+      if (!canvas || !canvas.offsetWidth) return;
+
+      const ctx = canvas.getContext("2d");
+      const m = parseFloat(sliderM.value);
+      const c = parseFloat(sliderC.value);
+
+      /* Update text displays */
+      document.getElementById("valM").innerText = m;
+      document.getElementById("valC").innerText = c;
+      document.getElementById("eqDisplay").innerHTML = `<span class="math-var">y</span> = ${m}<span class="math-var">x</span> ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)}`;
+      document.getElementById("yInterceptDisplay").innerText = `(0, ${c})`;
+
+      if (m !== 0) {
+        const xInt = (-c / m).toFixed(2);
+        document.getElementById("xInterceptDisplay").innerText = `(${xInt}, 0)`;
+      } else {
+        document.getElementById("xInterceptDisplay").innerText = "None (Line Parallel to x-axis)";
+      }
+
+      /* Clear Canvas */
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      /* Draw Cartesian Grid */
+      drawCartesianGrid(ctx, canvas.width, canvas.height);
+
+      /* Plot Line y = mx + c */
+      ctx.strokeStyle = "#00d2d3";
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+
+      const x1 = -10, y1 = m * x1 + c;
+      const x2 = 10, y2 = m * x2 + c;
+
+      ctx.moveTo(cartesianToCanvasX(x1, canvas.width), cartesianToCanvasY(y1, canvas.height));
+      ctx.lineTo(cartesianToCanvasX(x2, canvas.width), cartesianToCanvasY(y2, canvas.height));
+      ctx.stroke();
+
+      /* Highlight y-intercept point */
+      const ptX = cartesianToCanvasX(0, canvas.width);
+      const ptY = cartesianToCanvasY(c, canvas.height);
+      ctx.fillStyle = "#8a2be2";
+      ctx.beginPath();
+      ctx.arc(ptX, ptY, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    let sliderM2;
+
+    function initParallelCanvas() {
+      sliderM2 = document.getElementById("inputM2");
+      sliderM2.addEventListener("input", drawParallel);
+      drawParallel();
+    }
+
+    function drawParallel() {
+      const canvas = document.getElementById("parallelCanvas");
+      if (!canvas || !canvas.offsetWidth) return;
+
+      const ctx = canvas.getContext("2d");
+      const m1 = 2; // Fixed line 1 gradient
+      const c1 = 2; // Fixed line 1 y-intercept
+
+      const m2 = parseFloat(sliderM2.value);
+      const c2 = -3; // Fixed line 2 y-intercept
+
+      document.getElementById("valM2").innerText = m2;
+      document.getElementById("m2Label").innerText = m2 >= 0 ? m2 : `(${m2})`;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCartesianGrid(ctx, canvas.width, canvas.height);
+
+      /* Line 1: y = 2x + 2 (Blue) */
+      ctx.strokeStyle = "#60a5fa";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cartesianToCanvasX(-10, canvas.width), cartesianToCanvasY(m1 * -10 + c1, canvas.height));
+      ctx.lineTo(cartesianToCanvasX(10, canvas.width), cartesianToCanvasY(m1 * 10 + c1, canvas.height));
+      ctx.stroke();
+
+      /* Line 2: y = m2*x - 3 (Pink) */
+      ctx.strokeStyle = "#f472b6";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cartesianToCanvasX(-10, canvas.width), cartesianToCanvasY(m2 * -10 + c2, canvas.height));
+      ctx.lineTo(cartesianToCanvasX(10, canvas.width), cartesianToCanvasY(m2 * 10 + c2, canvas.height));
+      ctx.stroke();
+
+      /* Parallel Status Verification */
+      const statusBox = document.getElementById("parallelStatus");
+      if (m1 === m2) {
+        statusBox.className = "p-3.5 rounded-lg text-center font-bold text-sm bg-green-950/60 border-green-600 text-green-300";
+        statusBox.innerHTML = "✅ Lines are PARALLEL! (<span class='math-var'>m</span><sub>1</sub> = <span class='math-var'>m</span><sub>2</sub> = 2)";
+      } else {
+        statusBox.className = "p-3.5 rounded-lg text-center font-bold text-sm bg-red-950/60 border-red-800 text-red-300";
+        statusBox.innerHTML = "❌ Not Parallel (<span class='math-var'>m</span><sub>1</sub> &ne; <span class='math-var'>m</span><sub>2</sub>)";
+      }
+    }
+
+    /* Grid Rendering Helper */
+    function drawCartesianGrid(ctx, w, h) {
+      ctx.strokeStyle = "#161b22";
+      ctx.lineWidth = 1;
+
+      for (let x = 0; x <= w; x += 25) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y <= h; y += 25) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      /* Main Axes */
+      ctx.strokeStyle = "#30363d";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+    }
+
+    function cartesianToCanvasX(x, w) { return (w / 2) + (x * 25); }
+    function cartesianToCanvasY(y, h) { return (h / 2) - (y * 25); }
+
+    function initPracticeSection() {
+      document.getElementById("btnCheckPractice1").addEventListener("click", async () => {
+        const val = document.getElementById("practiceAns1").value.trim();
+        const fb = document.getElementById("practiceFeedback1");
+        fb.classList.remove("hidden");
+        const isCorrect = val === "5";
+
+        if (isCorrect) {
+          fb.className = "mt-3 text-sm p-3 rounded-lg border bg-green-950/50 border-green-700 text-green-300";
+          fb.innerHTML = "<strong>Congratulations! Correct Answer.</strong><br>Comparing <span class='math-var'>y</span> = 5<span class='math-var'>x</span> &minus; 7 with <span class='math-var'>y</span> = <span class='math-var'>m</span><span class='math-var'>x</span> + <span class='math-var'>c</span>, the gradient <span class='math-var'>m</span> = 5.";
+        } else {
+          fb.className = "mt-3 text-sm p-3 rounded-lg border bg-red-950/50 border-red-800 text-red-300";
+          fb.innerHTML = "<strong>Try Again.</strong> Compare the given equation with the standard form <span class='math-var'>y</span> = <span class='math-var'>m</span><span class='math-var'>x</span> + <span class='math-var'>c</span>. The coefficient of <span class='math-var'>x</span> is the gradient.";
+        }
+
+        /* Save practice attempt if logged in */
+        if (currentStudent && currentStudent.studentId && supabaseClient) {
+          try {
+            await supabaseClient.from('practice_progress').insert([{
+              student_id: currentStudent.studentId,
+              session_id: currentStudent.sessionId || null,
+              question_id: "P1",
+              question_text: "Gradient m for y = 5x - 7",
+              student_answer: val,
+              correct_answer: "5",
+              is_correct: isCorrect,
+              attempt_number: 1
+            }]);
+          } catch(e) { console.warn("Practice progress sync error:", e); }
+        }
+      });
+
+      document.getElementById("btnCheckPractice2").addEventListener("click", async () => {
+        const val = document.getElementById("practiceAns2").value.trim();
+        const fb = document.getElementById("practiceFeedback2");
+        fb.classList.remove("hidden");
+        const isCorrect = val === "4";
+
+        if (isCorrect) {
+          fb.className = "mt-3 text-sm p-3 rounded-lg border bg-green-950/50 border-green-700 text-green-300";
+          fb.innerHTML = "<strong>Spot on!</strong><br>Divide the entire equation by 2: <span class='math-var'>y</span> = 3<span class='math-var'>x</span> + 4. Thus the <span class='math-var'>y</span>-intercept (<span class='math-var'>c</span>) = 4.";
+        } else {
+          fb.className = "mt-3 text-sm p-3 rounded-lg border bg-red-950/50 border-red-800 text-red-300";
+          fb.innerHTML = "<strong>Not quite right.</strong> Please express in the form <span class='math-var'>y</span> = ... first by dividing both sides by 2.";
+        }
+
+        if (currentStudent && currentStudent.studentId && supabaseClient) {
+          try {
+            await supabaseClient.from('practice_progress').insert([{
+              student_id: currentStudent.studentId,
+              session_id: currentStudent.sessionId || null,
+              question_id: "P2",
+              question_text: "y-intercept for 2y = 6x + 8",
+              student_answer: val,
+              correct_answer: "4",
+              is_correct: isCorrect,
+              attempt_number: 1
+            }]);
+          } catch(e) { console.warn("Practice progress sync error:", e); }
+        }
+      });
+    }
+
+    function initAssessmentSection() {
+      const btnStart = document.getElementById("btnStartAssessment");
+      const btnReset = document.getElementById("btnResetRegistration");
+      const btnSubmit = document.getElementById("btnSubmitAssessment");
+
+      btnStart.addEventListener("click", async () => {
+        const name = document.getElementById("regStudentName").value.trim();
+        const className = document.getElementById("regClassName").value;
+        const teacherId = document.getElementById("regTeacherName").value;
+        const statusMsg = document.getElementById("regStatusMsg");
+
+        if (!name || !className || !teacherId) {
+          statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-red-950/50 border-red-800 text-red-300 block";
+          statusMsg.innerText = "Please complete all registration form fields.";
+          return;
+        }
+
+        const selectedTeacher = loadedTeachers.find(t => t.id === teacherId);
+        const teacherName = selectedTeacher ? selectedTeacher.teacher_name : "Mathematics Teacher";
+
+        let studentId = null;
+        let sessionId = null;
+
+        /* Save into students, learning_sessions, and attendance tables */
+        if (supabaseClient) {
+          try {
+            statusMsg.className = "mt-4 text-xs text-center p-2.5 rounded border bg-purple-950/50 border-purple-800 text-purple-300 block";
+            statusMsg.innerText = "Registering attendance in Supabase database...";
+
+            /* 1. Insert Student */
+            const { data: sData, error: sErr } = await supabaseClient
+              .from('students')
+              .insert([{
+                full_name: name,
+                class_name: className,
+                teacher_id: teacherId
+              }])
+              .select('id')
+              .single();
+
+            if (!sErr && sData) {
+              studentId = sData.id;
+
+              /* 2. Insert Learning Session */
+              const { data: sessData, error: sessErr } = await supabaseClient
+                .from('learning_sessions')
+                .insert([{
+                  student_id: studentId
+                }])
+                .select('id')
+                .single();
+
+              if (!sessErr && sessData) {
+                sessionId = sessData.id;
+              }
+
+              /* 3. Insert Attendance */
+              await supabaseClient
+                .from('attendance')
+                .insert([{
+                  student_id: studentId,
+                  session_id: sessionId,
+                  activity_name: 'Chapter 9: Straight Lines'
+                }]);
+            }
+          } catch(e) {
+            console.warn("Supabase attendance registration error:", e);
+          }
+        }
+
+        currentStudent = { 
+          name, 
+          className, 
+          teacherName, 
+          teacherId, 
+          studentId, 
+          sessionId,
+          registeredAt: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY_STUDENT, JSON.stringify(currentStudent));
+
+        updateStudentHeaderBadges(name, className);
+        unlockQuestionsCard(currentStudent);
+      });
+
+      btnReset.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY_STUDENT);
+        currentStudent = null;
+        document.getElementById("questionsCard").classList.add("hidden");
+        document.getElementById("registrationCard").classList.remove("hidden");
+        document.getElementById("studentHeaderBadge").classList.add("hidden");
+        document.getElementById("studentHeaderBadgeDesktop").classList.add("hidden");
+      });
+
+      btnSubmit.addEventListener("click", async () => {
+        const q1 = document.getElementById("q1Ans").value.trim();
+        const q2 = document.getElementById("q2Ans").value.trim();
+        const q3 = document.getElementById("q3Ans").value.trim().toLowerCase();
+        const resDiv = document.getElementById("assessmentResult");
+
+        if (!q1 || !q2 || !q3) {
+          const msg = document.createElement("div");
+          msg.className = "mt-3 p-2 bg-red-950 text-red-300 border border-red-800 rounded text-xs text-center";
+          msg.innerText = "Please answer all questions before submitting.";
+          resDiv.innerHTML = "";
+          resDiv.appendChild(msg);
+          resDiv.classList.remove("hidden");
+          return;
+        }
+
+        const isQ1Correct = q1 === "-3";
+        const isQ2Correct = q2 === "-6" || q2 === "6";
+        const isQ3Correct = q3 === "yes" || q3 === "ya" || q3 === "y";
+
+        let score = 0;
+        if (isQ1Correct) score++;
+        if (isQ2Correct) score++;
+        if (isQ3Correct) score++;
+
+        const percentage = Math.round((score / 3) * 100);
+        const totalMarks = 30;
+        const marksObtained = score * 10;
+
+        let supabaseStatusMsg = "";
+
+        /* Sync to assessment_results & assessment_answers */
+        if (supabaseClient && currentStudent && currentStudent.studentId) {
+          try {
+            const { data: resData, error: resErr } = await supabaseClient
+              .from('assessment_results')
+              .insert([{
+                student_id: currentStudent.studentId,
+                session_id: currentStudent.sessionId || null,
+                total_questions: 3,
+                correct_answers: score,
+                total_marks: totalMarks,
+                marks_obtained: marksObtained,
+                percentage: percentage
+              }])
+              .select('id')
+              .single();
+
+            if (!resErr && resData) {
+              const assessmentId = resData.id;
+
+              await supabaseClient.from('assessment_answers').insert([
+                {
+                  assessment_id: assessmentId,
+                  question_id: "Q1",
+                  question_text: "Gradient value for y = -3x + 8",
+                  student_answer: q1,
+                  correct_answer: "-3",
+                  is_correct: isQ1Correct,
+                  marks_awarded: isQ1Correct ? 10 : 0,
+                  learning_objective: "Identify gradient m"
+                },
+                {
+                  assessment_id: assessmentId,
+                  question_id: "Q2",
+                  question_text: "y-intercept for 2x - y = 6",
+                  student_answer: q2,
+                  correct_answer: "-6",
+                  is_correct: isQ2Correct,
+                  marks_awarded: isQ2Correct ? 10 : 0,
+                  learning_objective: "Find y-intercept"
+                },
+                {
+                  assessment_id: assessmentId,
+                  question_id: "Q3",
+                  question_text: "Parallel condition for y = 4x + 1 and y = 4x - 9",
+                  student_answer: q3,
+                  correct_answer: "Yes",
+                  is_correct: isQ3Correct,
+                  marks_awarded: isQ3Correct ? 10 : 0,
+                  learning_objective: "Parallel lines"
+                }
+              ]);
+
+              supabaseStatusMsg = "<br><span class='text-teal-300 text-xs'>✅ Successfully synced to Supabase Database (assessment_results & assessment_answers)!</span>";
+            } else {
+              supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
+            }
+          } catch(e) {
+            console.error("Assessment save error:", e);
+            supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
+          }
+        } else {
+          supabaseStatusMsg = "<br><span class='text-amber-400 text-xs'>Saved locally.</span>";
+        }
+
+        resDiv.className = "mt-6 p-4 rounded-xl text-center border bg-teal-950/80 border-teal-600 block";
+        resDiv.innerHTML = `
+          <h4 class="text-lg font-bold text-teal-300 mb-1">Assessment Submitted Successfully!</h4>
+          <p class="text-sm text-white">Score: <strong>${score} / 3</strong> (${percentage}%)</p>
+          <p class="text-xs text-[#8b949e] mt-1">${supabaseStatusMsg}</p>
+        `;
+      });
+    }
+
+    async function renderDashboardMetrics() {
+      const tbody = document.getElementById("studentRecordsTableBody");
+      tbody.innerHTML = "<tr><td colspan='6' class='p-3 text-center text-[#8b949e]'>Loading data from Supabase database...</td></tr>";
+
+      let displayRecords = [];
+
+      if (supabaseClient) {
+        try {
+          /* Query attendance records joined with students & teachers */
+          const { data: attData, error: attErr } = await supabaseClient
+            .from('attendance')
+            .select(`
+              id,
+              attendance_time,
+              activity_name,
+              students (
+                id,
+                full_name,
+                class_name,
+                teachers (
+                  teacher_name
+                )
+              )
+            `)
+            .order('created_at', { ascending: false });
+
+          /* Query assessment results */
+          const { data: resData, error: resErr } = await supabaseClient
+            .from('assessment_results')
+            .select('*');
+
+          if (!attErr && attData && attData.length > 0) {
+            displayRecords = attData.map(att => {
+              const student = att.students || {};
+              const teacher = student.teachers || {};
+
+              /* Match assessment result for this student */
+              const studentRes = resData ? resData.find(r => r.student_id === student.id) : null;
+
+              return {
+                name: student.full_name || "Anon Student",
+                className: student.class_name || "-",
+                teacherName: teacher.teacher_name || "-",
+                activity: att.activity_name || "Chapter 9: Straight Lines",
+                score: studentRes ? `${studentRes.correct_answers}/3 (${studentRes.percentage}%)` : "Not Completed",
+                percentage: studentRes ? studentRes.percentage : null,
+                created_at: att.attendance_time
+              };
+            });
+            updateSupabaseBadge(true);
+          }
+        } catch (e) {
+          console.warn("Could not fetch joined records from Supabase:", e);
+        }
+      }
+
+      /* Fallback to local storage if no Supabase records were returned */
+      if (displayRecords.length === 0 && studentRecords.length > 0) {
+        displayRecords = studentRecords.map(r => ({
+          name: r.name,
+          className: r.className,
+          teacherName: r.teacherName,
+          activity: "Chapter 9: Straight Lines",
+          score: r.score,
+          percentage: r.percentage,
+          created_at: r.created_at
+        }));
+      }
+
+      tbody.innerHTML = "";
+
+      const total = displayRecords.length;
+      document.getElementById("dashTotalStudents").innerText = total;
+
+      const completedCount = displayRecords.filter(r => r.percentage !== null).length;
+      document.getElementById("dashCompletedAssessments").innerText = completedCount;
+
+      if (total > 0) {
+        const completedWithScore = displayRecords.filter(r => r.percentage !== null);
+        const avg = completedWithScore.length > 0 ? 
+          Math.round(completedWithScore.reduce((acc, r) => acc + r.percentage, 0) / completedWithScore.length) : 0;
+        document.getElementById("dashAvgScore").innerText = `${avg}%`;
+
+        displayRecords.forEach(r => {
+          const dateStr = r.created_at ? new Date(r.created_at).toLocaleString('en-US', { hour12: true, dateStyle: 'short', timeStyle: 'short' }) : "-";
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-[#0d1117]";
+          tr.innerHTML = `
+            <td class="p-3 font-semibold text-white">${r.name}</td>
+            <td class="p-3 text-[#8b949e]">${r.className}</td>
+            <td class="p-3 text-[#8b949e]">${r.teacherName}</td>
+            <td class="p-3 text-purple-300 font-medium">${r.activity}</td>
+            <td class="p-3 font-bold ${r.percentage !== null ? 'text-teal-400' : 'text-[#8b949e]'}">${r.score}</td>
+            <td class="p-3 text-[#8b949e] text-[11px]">${dateStr}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = "<tr><td colspan='6' class='p-3 text-center text-[#8b949e]'>No records found in the database.</td></tr>";
+      }
+    }
+  </script>
+</body>
+</html>
